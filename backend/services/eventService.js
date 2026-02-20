@@ -19,5 +19,10 @@ exports.viewEvents = async () => {
 }
 
 exports.updateEvent = (newEvent,id) => {
-    return EventModel.update(newEvent,id)
+    return EventModel.update(newEvent,id);
+}
+
+exports.disableEvent = (id) => {
+    return EventModel.disable(id);
+
 }
