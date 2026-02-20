@@ -9,12 +9,15 @@ const events = [event1, event2]
 
 exports.createEvent = (event) => {
     const newEvent = new Event(event);
-    return EventModel.create(event)
+    return EventModel.create(newEvent)
 }
 
 exports.viewEvents = async () => {
     console.log('view events');
     console.log(await EventModel.getAll());
     return EventModel.getAll()
+}
 
+exports.updateEvent = (newEvent,id) => {
+    return EventModel.update(newEvent,id)
 }

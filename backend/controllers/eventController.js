@@ -9,3 +9,9 @@ exports.viewEvents = async (req, res) => {
     const events = await eventService.viewEvents();
     res.json(events);
 }
+
+exports.updateEvent = async (req, res) => {
+    const {id} = req.params;
+    const newEvent = await eventService.updateEvent(req.body, id);
+    res.json(newEvent);
+}
