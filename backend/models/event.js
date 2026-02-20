@@ -1,5 +1,5 @@
 class Event {
-    constructor(name, date, description, image, category, price) {
+    constructor({name, date = null, description = null, image = null, category = null, price = null}) {
         this.name = name;
         this.date = date;
         this.description = description;

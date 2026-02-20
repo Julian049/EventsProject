@@ -10,6 +10,7 @@
   "author": "Julian Bocanegra, Diego Gil",
   "license": "ISC",
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "pg-promise": "^12.6.1"
   }
 }

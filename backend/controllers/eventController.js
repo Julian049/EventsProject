@@ -1,11 +1,11 @@
 const eventService = require('../services/eventService');
 
-exports.createEvent = (req, res) => {
-    const event = req.body;
-    const newEvent = eventService.createEvent()
+exports.createEvent = async (req, res) => {
+    const newEvent = await eventService.createEvent(req.body);
     res.json(newEvent);
 }
 
-exports.viewEvents = (req, res) => {
-    res.json(eventService.viewEvents());
+exports.viewEvents = async (req, res) => {
+    const events = await eventService.viewEvents();
+    res.json(events);
 }
