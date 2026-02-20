@@ -15,3 +15,9 @@ exports.updateEvent = async (req, res) => {
     const newEvent = await eventService.updateEvent(req.body, id);
     res.json(newEvent);
 }
+
+exports.disableEvent = async (req, res) => {
+    const {id} = req.params;
+    const newEvent = await eventService.disableEvent(id);
+    res.json(newEvent);
+}

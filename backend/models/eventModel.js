@@ -1,9 +1,9 @@
 const db = require('../database');
 
 const getAll = () => db.any('SELECT * FROM event LIMIT 1');
-const create = (event) => db.one(`INSERT INTO event (name, date, description, image, category, price)
+const create = (event) => db.one(`INSERT INTO event (name, date, description, image, category, price, status)
                                   VALUES ($(name), $(date), $(description), $(image), $(category),
-                                          $(price))
+                                          $(price), true)
                                   RETURNING *`, event)
 const update = (newEvent, id) => db.one(`UPDATE event
                                          SET name=$(name),
@@ -14,5 +14,8 @@ const update = (newEvent, id) => db.one(`UPDATE event
                                              price=$(price)
                                          WHERE id = $(id)
                                          RETURNING *`, {...newEvent, id});
+const disable = (id) => db.one(`UPDATE event
+                                SET status= false
+                                WHERE id = $(id) RETURNING *`, {id});
 
-module.exports = {getAll, create, update};
+module.exports = {getAll, create, update, disable};
