@@ -19,4 +19,5 @@ const disable = (id) => db.one(`UPDATE event
                                 SET status= false
                                 WHERE id = $(id) RETURNING *`, {id});
 
-module.exports = {getAll, create, update, disable};
+const getById = (id) => db.one('SELECT * FROM event WHERE id = $(id)', {id});
+module.exports = {getAll, create, update, disable, getById};
