@@ -39,3 +39,46 @@ function renderEvents(events) {
 }
 
 loadEvents();
+
+function openAddModal() {
+    document.getElementById("add-modal").classList.add("active");
+}
+
+function closeAddModal() {
+    document.getElementById("add-modal").classList.remove("active");
+}
+
+function closeModalOutside(e) {
+    if (e.target.id === "add-modal") closeAddModal();
+}
+
+async function createEvent() {
+    const name = document.getElementById("a-name").value.trim();
+    if (!name) {
+        alert("El nombre es obligatorio.");
+        return;
+    }
+
+    const body = {
+        name,
+        date:        document.getElementById("a-date").value || null,
+        description: document.getElementById("a-description").value || null,
+        image:       document.getElementById("a-image").value || null,
+        category:    document.getElementById("a-category").value || null,
+        price:       document.getElementById("a-price").value || null,
+    };
+
+    try {
+        const res = await fetch(`${API_URL}/create`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+        const newEvent = await res.json();
+        closeAddModal();
+        loadEvents(); // recarga el listado
+    } catch (err) {
+        console.error("Error al crear:", err);
+        alert("Error al crear el evento.");
+    }
+}

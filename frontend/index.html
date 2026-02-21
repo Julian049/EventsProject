@@ -10,11 +10,47 @@
 
 <header>
     <h1>Eventos</h1>
+    <button class="btn-add" onclick="openAddModal()">+ Añadir Evento</button>
 </header>
 
 <main>
     <div id="events-container" class="grid"></div>
 </main>
+
+<!-- Modal -->
+<div class="modal-overlay" id="add-modal" onclick="closeModalOutside(event)">
+    <div class="modal">
+        <h2>Nuevo Evento</h2>
+        <div class="form-group">
+            <label>Nombre *</label>
+            <input id="a-name" type="text" placeholder="Nombre del evento"/>
+        </div>
+        <div class="form-group">
+            <label>Fecha</label>
+            <input id="a-date" type="datetime-local"/>
+        </div>
+        <div class="form-group">
+            <label>Descripción</label>
+            <textarea id="a-description" rows="3" placeholder="Descripción del evento"></textarea>
+        </div>
+        <div class="form-group">
+            <label>Imagen (URL)</label>
+            <input id="a-image" type="text" placeholder="https://..."/>
+        </div>
+        <div class="form-group">
+            <label>Categoría</label>
+            <input id="a-category" type="text" placeholder="Fútbol, Concierto..."/>
+        </div>
+        <div class="form-group">
+            <label>Precio</label>
+            <input id="a-price" type="number" placeholder="0"/>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeAddModal()">Cancelar</button>
+            <button class="btn-save" onclick="createEvent()">Crear</button>
+        </div>
+    </div>
+</div>
 
 <script src="app.js"></script>
 </body>
