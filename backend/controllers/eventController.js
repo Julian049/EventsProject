@@ -21,3 +21,14 @@ exports.disableEvent = async (req, res) => {
     const newEvent = await eventService.disableEvent(id);
     res.json(newEvent);
 }
+
+exports.getEventById = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const event = await eventService.getEventById(id);
+        res.json(event);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({error: err.message});
+    }
+}

@@ -24,5 +24,8 @@ exports.updateEvent = (newEvent,id) => {
 
 exports.disableEvent = (id) => {
     return EventModel.disable(id);
+}
 
+exports.getEventById = (id) => {
+    return EventModel.getById(id);
 }

@@ -12,11 +12,12 @@ async function loadDetail() {
 
     try {
         const res = await fetch(`${API_URL}/${id}`);
-        const event = await res.json();
-        renderDetail(event);
+        const data = await res.json();
+        console.log("Respuesta:", data);  // <-- agrega esto
+        renderDetail(data);
     } catch (err) {
+        console.error("Error completo:", err);  // <-- y esto
         container.innerHTML = "<p>Error loading event.</p>";
-        console.error(err);
     }
 }
 
