@@ -78,3 +78,120 @@ header {
     margin-top: 60px;
     color: #888;
 }
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.btn-edit, .btn-disable {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-edit {
+    background: #1e293b;
+    color: white;
+}
+
+.btn-disable {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.btn-edit:hover, .btn-disable:hover {
+    opacity: 0.8;
+}
+
+/* Modal */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+
+.modal h2 {
+    margin: 0 0 20px;
+    color: #1e293b;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 14px;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group textarea {
+    padding: 9px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border 0.2s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #1e293b;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.btn-cancel {
+    padding: 9px 18px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-save {
+    padding: 9px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #1e293b;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-cancel:hover { background: #f1f5f9; }
+.btn-save:hover   { opacity: 0.85; }
