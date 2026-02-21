@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const port = 3250;
+const cors = require('cors');
 
 const db = require('./database');
 db.one('SELECT $1 AS value', 123)
@@ -9,5 +10,6 @@ db.one('SELECT $1 AS value', 123)
 
 app.use(express.json());
 app.use('/event', require("./routes/eventRoute"));
+app.use(cors());
 
 app.listen(port, () => console.log("Server running on port " + port));
