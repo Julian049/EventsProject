@@ -1,6 +1,7 @@
 const db = require('../database');
 
-const getAll = () => db.any('SELECT * FROM event LIMIT 1');
+// const getAll = () => db.any('SELECT * FROM event LIMIT 1');
+const getAll = () => db.any('SELECT * FROM event WHERE status = true');
 const create = (event) => db.one(`INSERT INTO event (name, date, description, image, category, price, status)
                                   VALUES ($(name), $(date), $(description), $(image), $(category),
                                           $(price), true)
