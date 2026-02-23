@@ -1,5 +1,12 @@
+require('dotenv').config();
 const pgp = require('pg-promise')();
 
-const db = pgp('postgresql://julian:postgres@172.31.88.36:5432/eventtestdb');
+const db = pgp({
+    host:     process.env.DB_HOST,
+    port:     process.env.DB_PORT,
+    database: process.env.POSTGRES_DB,
+    user:     process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD
+});
 
 module.exports = db;
