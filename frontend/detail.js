@@ -98,7 +98,7 @@ async function saveEvent() {
         date:        document.getElementById("f-date").value || null,
         description: document.getElementById("f-description").value || null,
         image:       document.getElementById("f-image").value || null,
-        category:    document.getElementById("f-category").value || null,
+        category_id: null,
         price:       document.getElementById("f-price").value || null,
     };
 

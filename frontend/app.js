@@ -52,7 +52,7 @@ function closeModalOutside(e) {
     if (e.target.id === "add-modal") closeAddModal();
 }
 
-async function createEvent() {
+async function handleCreateEvent() {
     const name = document.getElementById("a-name").value.trim();
     if (!name) {
         alert("El nombre es obligatorio.");
@@ -64,7 +64,7 @@ async function createEvent() {
         date:        document.getElementById("a-date").value || null,
         description: document.getElementById("a-description").value || null,
         image:       document.getElementById("a-image").value || null,
-        category:    document.getElementById("a-category").value || null,
+        category_id: null,
         price:       document.getElementById("a-price").value || null,
     };
 
