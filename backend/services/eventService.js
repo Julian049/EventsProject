@@ -33,3 +33,7 @@ exports.getEventById = (id) => {
 exports.interestEvent = (id) => {
     return EventModel.interest(id);
 }
+
+exports.getAllInterest = () =>{
+    return EventModel.getAllInterests();
+}
