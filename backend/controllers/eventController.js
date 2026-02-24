@@ -14,7 +14,7 @@ exports.viewEvents = async (req, res) => {
             data: events
         });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({error: err.message});
     }
 }
 
@@ -45,9 +45,19 @@ exports.interestEvent = async (req, res) => {
     try {
         const {id} = req.params;
         await eventService.interestEvent(id);
-        res.json({ message: "Interés registrado correctamente" });
+        res.json({message: "Interés registrado correctamente"});
     } catch (err) {
         console.error(err);
-        res.status(500).json({ error: err.message });
+        res.status(500).json({error: err.message});
+    }
+}
+
+exports.getAllInterest = async (req, res) => {
+    try {
+        const interests = await eventService.getAllInterest();
+        res.json(interests);
+    } catch (err) {
+        console.log("Mori en controlador")
+        res.status(500).json({error: err.message});
     }
 }

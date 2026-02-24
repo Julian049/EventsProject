@@ -72,6 +72,10 @@ function nextPage(){
     loadEvents(pageNumber);
 }
 
+function viewReport() {
+    window.location.href = "report.html";
+}
+
 function closeAddModal() {
     document.getElementById("add-modal").classList.remove("active");
 }

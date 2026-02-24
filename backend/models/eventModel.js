@@ -22,4 +22,5 @@ const disable = (id) => db.one(`UPDATE event
 
 const getById = (id) => db.one('SELECT * FROM event WHERE id = $(id)', {id});
 const interest = (id) => db.none("INSERT INTO interaction (event_id, type) VALUES ($1, 'click')", [id])
-module.exports = {getAll, create, update, disable, getById, interest};
+const getAllInterests = () => db.any('SELECT * FROM interaction');
+module.exports = {getAll, create, update, disable, getById, interest, getAllInterests};

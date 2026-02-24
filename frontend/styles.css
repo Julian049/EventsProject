@@ -235,3 +235,20 @@ header {
     background: rgba(255,255,255,0.15);
     border-color: white;
 }
+
+.btn-view-report {
+    padding: 10px 20px;
+    background: #f97316;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-view-report:hover {
+    background: #ea6c0a;
+    transform: translateY(-1px);
+}
