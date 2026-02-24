@@ -1,14 +1,36 @@
 const container = document.getElementById("events-container");
-
 const API_URL = "http://localhost:3250/event";
+
+// ← estas dos funciones deben estar AQUÍ, fuera de todo
+async function loadCategoriesSelect(selectId) {
+    try {
+        const res = await fetch("http://localhost:3250/category");
+        const categories = await res.json();
+        const select = document.getElementById(selectId);
+        select.innerHTML = '<option value="">Sin categoría</option>';
+        categories.forEach(cat => {
+            const option = document.createElement("option");
+            option.value = cat.id;
+            option.textContent = cat.name;
+            select.appendChild(option);
+        });
+    } catch (err) {
+        console.error("Error cargando categorías:", err);
+    }
+}
+
+function setMinDate(inputId) {
+    const now = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    const min = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+    document.getElementById(inputId).min = min;
+}
 
 async function loadEvents() {
     try {
         const res = await fetch(API_URL);
         const events = await res.json();
-
         renderEvents(events);
-
     } catch (err) {
         container.innerHTML = "<p>Error loading events</p>";
         console.error(err);
@@ -17,11 +39,9 @@ async function loadEvents() {
 
 function renderEvents(events) {
     container.innerHTML = "";
-
     events.forEach(event => {
         const card = document.createElement("div");
         card.className = "card";
-
         card.innerHTML = `
           <img src="${event.image}" alt="event image"/>
           <div class="card-content">
@@ -29,18 +49,16 @@ function renderEvents(events) {
             <div class="card-desc">${event.description || ""}</div>
           </div>
         `;
-
         card.addEventListener("click", () => {
             window.location.href = `detail.html?id=${event.id}`;
         });
-
         container.appendChild(card);
     });
 }
 
-loadEvents();
-
 function openAddModal() {
+    loadCategoriesSelect("a-category");
+    setMinDate("a-date");
     document.getElementById("add-modal").classList.add("active");
 }
 
@@ -64,7 +82,7 @@ async function handleCreateEvent() {
         date:        document.getElementById("a-date").value || null,
         description: document.getElementById("a-description").value || null,
         image:       document.getElementById("a-image").value || null,
-        category_id: null,
+        category_id: document.getElementById("a-category").value || null,
         price:       document.getElementById("a-price").value || null,
     };
 
@@ -76,9 +94,11 @@ async function handleCreateEvent() {
         });
         const newEvent = await res.json();
         closeAddModal();
-        loadEvents(); // recarga el listado
+        loadEvents();
     } catch (err) {
         console.error("Error al crear:", err);
         alert("Error al crear el evento.");
     }
 }
+
+loadEvents();
