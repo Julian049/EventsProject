@@ -19,6 +19,6 @@ CREATE TABLE IF NOT EXISTS event (
 CREATE TABLE IF NOT EXISTS interaction (
     id         SERIAL PRIMARY KEY,
     event_id   INTEGER NOT NULL REFERENCES event(id),
-    type       VARCHAR(50) CHECK (type IN ('click', 'view')),
+    type       VARCHAR(50) CHECK (type IN ('click')),
     created_at TIMESTAMP DEFAULT NOW()
 );
