@@ -6,8 +6,16 @@ exports.createEvent = async (req, res) => {
 }
 
 exports.viewEvents = async (req, res) => {
-    const events = await eventService.viewEvents();
-    res.json(events);
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const events = await eventService.viewEvents(page);
+        res.json({
+            page: page,
+            data: events
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 }
 
 exports.updateEvent = async (req, res) => {
