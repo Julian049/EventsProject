@@ -40,3 +40,14 @@ exports.getEventById = async (req, res) => {
         res.status(500).json({error: err.message});
     }
 }
+
+exports.interestEvent = async (req, res) => {
+    try {
+        const {id} = req.params;
+        await eventService.interestEvent(id);
+        res.json({ message: "Interés registrado correctamente" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: err.message });
+    }
+}

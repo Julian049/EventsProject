@@ -7,5 +7,6 @@ router.get('/', eventController.viewEvents);
 router.put('/update/:id',eventController.updateEvent);
 router.patch('/disable/:id',eventController.disableEvent);
 router.get('/:id', eventController.getEventById);
+router.patch('/interested/:id', eventController.interestEvent);
 
 module.exports = router;
