@@ -29,3 +29,7 @@ exports.disableEvent = (id) => {
 exports.getEventById = (id) => {
     return EventModel.getById(id);
 }
+
+exports.interestEvent = (id) => {
+    return EventModel.interest(id);
+}

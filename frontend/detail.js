@@ -30,15 +30,16 @@ function renderDetail(event) {
             <div class="detalle-info">
                 <div class="detalle-title">${event.name}</div>
                 <div class="detalle-meta">
-                    ${event.date     ? `<span class="badge">📅 ${new Date(event.date).toLocaleDateString('es-ES')}</span>` : ''}
+                    ${event.date ? `<span class="badge">📅 ${new Date(event.date).toLocaleDateString('es-ES')}</span>` : ''}
                     ${event.category ? `<span class="badge">🏷️ ${event.category}</span>` : ''}
-                    ${event.price    ? `<span class="badge price">💲${event.price}</span>` : ''}
+                    ${event.price ? `<span class="badge price">💲${event.price}</span>` : ''}
                 </div>
                 <div class="detalle-desc">${event.description || 'Sin descripción.'}</div>
 
                 <div class="action-buttons">
-                    <button class="btn-edit" onclick="openModal()">✏️ Editar</button>
-                    <button class="btn-disable" onclick="disableEvent()">🚫 Deshabilitar</button>
+                    <button class="btn-edit" onclick="openModal()">✏Editar</button>
+                    <button class="btn-disable" onclick="disableEvent()">Deshabilitar</button>
+                    <button class="btn-interest" onclick="clickInterest()">Me interesa</button>
                 </div>
             </div>
         </div>
@@ -53,7 +54,7 @@ function renderDetail(event) {
                 </div>
                 <div class="form-group">
                     <label>Fecha</label>
-                    <input id="f-date" type="datetime-local" value="${event.date ? event.date.slice(0,16) : ''}"/>
+                    <input id="f-date" type="datetime-local" value="${event.date ? event.date.slice(0, 16) : ''}"/>
                 </div>
                 <div class="form-group">
                     <label>Descripción</label>
@@ -94,18 +95,18 @@ function closeModalOutside(e) {
 
 async function saveEvent() {
     const body = {
-        name:        document.getElementById("f-name").value,
-        date:        document.getElementById("f-date").value || null,
+        name: document.getElementById("f-name").value,
+        date: document.getElementById("f-date").value || null,
         description: document.getElementById("f-description").value || null,
-        image:       document.getElementById("f-image").value || null,
+        image: document.getElementById("f-image").value || null,
         category_id: null,
-        price:       document.getElementById("f-price").value || null,
+        price: document.getElementById("f-price").value || null,
     };
 
     try {
         const res = await fetch(`http://localhost:3250/event/update/${id}`, {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: {"Content-Type": "application/json"},
             body: JSON.stringify(body)
         });
         const updated = await res.json();
@@ -121,11 +122,21 @@ async function disableEvent() {
     if (!confirm("¿Seguro que quieres deshabilitar este evento?")) return;
 
     try {
-        await fetch(`http://localhost:3250/event/disable/${id}`, { method: "PATCH" });
+        await fetch(`http://localhost:3250/event/disable/${id}`, {method: "PATCH"});
         window.location.href = "index.html";
     } catch (err) {
         console.error("Error al deshabilitar:", err);
         alert("Error al deshabilitar el evento.");
+    }
+}
+
+async function clickInterest() {
+    try {
+        await fetch(`http://localhost:3250/event/interested/${id}`, {method: "PATCH"});
+        alert("¡Interés registrado!");
+    } catch (err) {
+        console.error("Error al registrar interés:", err);
+        alert("Error al registrar el interés.");
     }
 }
 
