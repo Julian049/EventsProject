@@ -12,10 +12,10 @@ exports.createEvent = (event) => {
     return EventModel.create(newEvent)
 }
 
-exports.viewEvents = async () => {
-    console.log('view events');
-    console.log(await EventModel.getAll());
-    return EventModel.getAll()
+exports.viewEvents = async (page) => {
+    const limit = 10;
+    const offset = (page - 1) * limit;
+    return EventModel.getAll(limit, offset);
 }
 
 exports.updateEvent = (newEvent,id) => {

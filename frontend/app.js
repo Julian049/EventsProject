@@ -1,7 +1,7 @@
 const container = document.getElementById("events-container");
 const API_URL = "http://localhost:3250/event";
+let pageNumber = 1;
 
-// ← estas dos funciones deben estar AQUÍ, fuera de todo
 async function loadCategoriesSelect(selectId) {
     try {
         const res = await fetch("http://localhost:3250/category");
@@ -26,11 +26,12 @@ function setMinDate(inputId) {
     document.getElementById(inputId).min = min;
 }
 
-async function loadEvents() {
+async function loadEvents(page = 1) {
     try {
-        const res = await fetch(API_URL);
-        const events = await res.json();
-        renderEvents(events);
+        const res = await fetch(`${API_URL}?page=${page}`);
+        const json = await res.json();
+        // La API devuelve { page, data: [...] }
+        renderEvents(json.data);
     } catch (err) {
         container.innerHTML = "<p>Error loading events</p>";
         console.error(err);
@@ -39,6 +40,10 @@ async function loadEvents() {
 
 function renderEvents(events) {
     container.innerHTML = "";
+    if (!events || events.length === 0) {
+        container.innerHTML = "<p>No hay eventos disponibles.</p>";
+        return;
+    }
     events.forEach(event => {
         const card = document.createElement("div");
         card.className = "card";
@@ -60,6 +65,11 @@ function openAddModal() {
     loadCategoriesSelect("a-category");
     setMinDate("a-date");
     document.getElementById("add-modal").classList.add("active");
+}
+
+function nextPage(){
+    pageNumber++;
+    loadEvents(pageNumber);
 }
 
 function closeAddModal() {
@@ -101,4 +111,4 @@ async function handleCreateEvent() {
     }
 }
 
-loadEvents();
+loadEvents(pageNumber);
