@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Eventos</title>
-    <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
 
@@ -12,7 +11,7 @@
     <h1>Eventos</h1>
     <a href="categories.html" class="btn-nav">Categorías</a>
     <button class="btn-add" onclick="openAddModal()">+ Añadir Evento</button>
-    <button class="btn-next-page" onclick="nextPage()">Siguinete pagina</button>
+    <button class="btn-next-page" onclick="nextPage()">Siguiente página</button>
     <button class="btn-view-report" onclick="viewReport()">Ver reporte</button>
 </header>
 
@@ -30,7 +29,7 @@
         </div>
         <div class="form-group">
             <label>Fecha</label>
-            <input id="a-date" type="datetime-local" id="a-date"/>
+            <input id="a-date" type="datetime-local"/>
         </div>
         <div class="form-group">
             <label>Descripción</label>
@@ -57,6 +56,6 @@
     </div>
 </div>
 
-<script src="app.js"></script>
+<script type="module" src="src/pagesjs/main.js"></script>
 </body>
 </html>
