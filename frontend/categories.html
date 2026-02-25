@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Categorías</title>
-    <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
 
@@ -21,7 +20,7 @@
 </main>
 
 <!-- Modal crear/editar -->
-<div class="modal-overlay" id="category-modal" onclick="closeModalOutside(event)">
+<div class="modal-overlay" id="category-modal">
     <div class="modal">
         <h2 id="modal-title">Nueva Categoría</h2>
         <div class="form-group">
@@ -34,11 +33,11 @@
         </div>
         <div class="modal-actions">
             <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
-            <button class="btn-save" id="modal-save-btn" onclick="handleSave()">Crear</button>
+            <button class="btn-save" id="modal-save-btn">Crear</button>
         </div>
     </div>
 </div>
 
-<script src="categories.js"></script>
+<script type="module" src="src/pagesjs/categories.js"></script>
 </body>
 </html>
