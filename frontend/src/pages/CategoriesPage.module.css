@@ -1,0 +1,146 @@
+.page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.03em;
+}
+
+.btnAdd {
+  padding: 0.6rem 1.4rem;
+  background: var(--ink);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.btnAdd:hover { opacity: 0.85; transform: translateY(-1px); }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.25rem;
+}
+
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.4rem;
+  box-shadow: var(--shadow);
+  animation: fadeUp 0.4s ease both;
+  border: 1.5px solid transparent;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  border-color: var(--border);
+  box-shadow: var(--shadow-lg);
+}
+
+.cardTop {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.icon {
+  font-size: 1.6rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.cardName {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 0.25rem;
+}
+
+.cardDesc {
+  font-size: 0.85rem;
+  color: var(--ink-low);
+  line-height: 1.5;
+}
+
+.cardActions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.btnEdit, .btnDisable {
+  padding: 0.45rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.btnEdit { background: var(--ink); color: white; }
+.btnDisable { background: #fee2e2; color: #991b1b; }
+.btnEdit:hover, .btnDisable:hover { opacity: 0.8; }
+
+.empty {
+  text-align: center;
+  color: var(--ink-low);
+  margin-top: 4rem;
+  font-size: 1rem;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.btnCancel {
+  padding: 0.55rem 1.2rem;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: background 0.2s;
+}
+
+.btnCancel:hover { background: var(--surface); }
+
+.btnSave {
+  padding: 0.55rem 1.4rem;
+  background: var(--ink);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: opacity 0.2s;
+}
+
+.btnSave:hover:not(:disabled) { opacity: 0.85; }
+.btnSave:disabled { opacity: 0.5; cursor: not-allowed; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

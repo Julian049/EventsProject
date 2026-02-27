@@ -1,0 +1,189 @@
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.03em;
+}
+
+.btnAdd {
+  padding: 0.6rem 1.4rem;
+  background: var(--ink);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.btnAdd:hover { opacity: 0.85; transform: translateY(-1px); }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: transform 0.25s, box-shadow 0.25s;
+  animation: fadeUp 0.4s ease both;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+}
+
+.imgWrap {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  background: var(--border);
+}
+
+.imgWrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s;
+}
+
+.card:hover .imgWrap img {
+  transform: scale(1.04);
+}
+
+.cardBody {
+  padding: 1rem 1.1rem 1.2rem;
+}
+
+.cardTitle {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 0.35rem;
+  letter-spacing: -0.01em;
+}
+
+.cardDesc {
+  font-size: 0.85rem;
+  color: var(--ink-low);
+  margin-bottom: 0.7rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ink-mid);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+
+.empty {
+  text-align: center;
+  color: var(--ink-low);
+  margin-top: 4rem;
+  font-size: 1rem;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  margin-top: 3rem;
+}
+
+.pageBtn {
+  padding: 0.5rem 1.2rem;
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--ink);
+  transition: all 0.2s;
+}
+
+.pageBtn:hover:not(:disabled) {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: white;
+}
+
+.pageBtn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.pageNum {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink-mid);
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.btnCancel {
+  padding: 0.55rem 1.2rem;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: background 0.2s;
+}
+
+.btnCancel:hover { background: var(--surface); }
+
+.btnSave {
+  padding: 0.55rem 1.4rem;
+  background: var(--ink);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: opacity 0.2s;
+}
+
+.btnSave:hover:not(:disabled) { opacity: 0.85; }
+.btnSave:disabled { opacity: 0.5; cursor: not-allowed; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
