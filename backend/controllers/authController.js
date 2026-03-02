@@ -7,7 +7,7 @@ exports.login = async (req, res) => {
         const password = req.body.password;
 
         const token = await authService.login(email, password);
-        res.status(200).json(token);
+        res.status(200).send({token:token});
     } catch (err) {
         if (err instanceof errors.NotFoundError) {
             res.status(204).json({error: err.message});
