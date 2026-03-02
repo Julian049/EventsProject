@@ -17,5 +17,6 @@ app.use(express.json());
 app.use('/event', require("./routes/eventRoute"));
 app.use('/category', require("./routes/categoryRoute"));
 app.use('/users', require("./routes/userRoute"));
+app.use('/auth', require("./routes/authRoute"));
 
 app.listen(port, () => console.log("Server running on port " + port));
