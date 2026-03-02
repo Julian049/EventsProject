@@ -4,6 +4,7 @@ export function hashPassword(password) {
     return bcrypt.hashSync(password, 12);
 }
 
-function validatePassword(savedPassword, password) {
+export async function validatePassword(savedPassword, password) {
+    console.log("password11");
     return bcrypt.compare(password, savedPassword);
 }
