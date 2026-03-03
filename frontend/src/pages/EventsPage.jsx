@@ -1,28 +1,19 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getEvents, createEvent, getCategories } from '../api/api'
 import Modal from '../components/Modal'
-import FormField from '../components/FormField'
+import EventForm from '../components/EventForm'  // ← nuevo import
 import Spinner from '../components/Spinner'
 import styles from './EventsPage.module.css'
 
-function setMinDate(ref) {
-  if (!ref.current) return
-  const now = new Date()
-  const pad = (n) => String(n).padStart(2, '0')
-  ref.current.min = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`
-}
-
 export default function EventsPage() {
   const navigate = useNavigate()
-  const [events, setEvents]       = useState([])
-  const [loading, setLoading]     = useState(true)
-  const [page, setPage]           = useState(1)
-  const [modalOpen, setModalOpen] = useState(false)
+  const [events, setEvents]         = useState([])
+  const [loading, setLoading]       = useState(true)
+  const [page, setPage]             = useState(1)
+  const [modalOpen, setModalOpen]   = useState(false)
   const [categories, setCategories] = useState([])
-  const [saving, setSaving]       = useState(false)
-
-  const dateRef = useRef(null)
+  const [saving, setSaving]         = useState(false)
 
   const [form, setForm] = useState({
     name: '', date: '', description: '', image: '', category_id: '', price: ''
@@ -44,7 +35,6 @@ export default function EventsPage() {
     getCategories().then(setCategories).catch(() => {})
     setForm({ name: '', date: '', description: '', image: '', category_id: '', price: '' })
     setModalOpen(true)
-    setTimeout(() => setMinDate(dateRef), 50)
   }
 
   async function handleCreate(e) {
@@ -131,73 +121,17 @@ export default function EventsPage() {
         </div>
       )}
 
+      {/* ↓ Todo el <form> reemplazado por EventForm */}
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Nuevo Evento">
-        <form onSubmit={handleCreate}>
-          <FormField label="Nombre *">
-            <input
-              className="field-input"
-              value={form.name}
-              onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-              placeholder="Nombre del evento"
-              required
-            />
-          </FormField>
-          <FormField label="Fecha">
-            <input
-              ref={dateRef}
-              className="field-input"
-              type="datetime-local"
-              value={form.date}
-              onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
-            />
-          </FormField>
-          <FormField label="Descripción">
-            <textarea
-              className="field-input"
-              rows={3}
-              value={form.description}
-              onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-              placeholder="Descripción del evento"
-            />
-          </FormField>
-          <FormField label="Imagen (URL)">
-            <input
-              className="field-input"
-              value={form.image}
-              onChange={e => setForm(f => ({ ...f, image: e.target.value }))}
-              placeholder="https://..."
-            />
-          </FormField>
-          <FormField label="Categoría">
-            <select
-              className="field-input"
-              value={form.category_id}
-              onChange={e => setForm(f => ({ ...f, category_id: e.target.value }))}
-            >
-              <option value="">Sin categoría</option>
-              {categories.map(c => (
-                <option key={c.id} value={c.id}>{c.name}</option>
-              ))}
-            </select>
-          </FormField>
-          <FormField label="Precio">
-            <input
-              className="field-input"
-              type="number"
-              value={form.price}
-              onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
-              placeholder="0"
-            />
-          </FormField>
-          <div className={styles.modalActions}>
-            <button type="button" className={styles.btnCancel} onClick={() => setModalOpen(false)}>
-              Cancelar
-            </button>
-            <button type="submit" className={styles.btnSave} disabled={saving}>
-              {saving ? 'Creando...' : 'Crear'}
-            </button>
-          </div>
-        </form>
+        <EventForm
+          form={form}
+          setForm={setForm}
+          categories={categories}
+          onSubmit={handleCreate}
+          onCancel={() => setModalOpen(false)}
+          saving={saving}
+          submitLabel="Crear"
+        />
       </Modal>
     </div>
   )
