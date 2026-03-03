@@ -11,7 +11,7 @@ db.one('SELECT $1 AS value', 123)
 app.use(cors({
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-    allowedHeaders: ['Content-Type']
+    allowedHeaders: ['Content-Type','Authorization']
 }));
 app.use(express.json());
 app.use('/event', require("./routes/eventRoute"));

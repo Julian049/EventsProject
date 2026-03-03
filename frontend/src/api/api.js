@@ -1,7 +1,25 @@
-export const API_BASE = ''
+export const API_BASE = 'http://localhost:3250';
+
+const getHeaders = () => {
+    const token = localStorage.getItem('token');
+    return {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    };
+};
+
+export const login = (body) =>
+    fetch(`${API_BASE}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+    }).then(async r => {
+        if (!r.ok) throw new Error('Credenciales incorrectas');
+        return r.json();
+    });
 
 export const getEvents = (page = 1) =>
-  fetch(`${API_BASE}/event?page=${page}`).then(r => r.json())
+    fetch(`${API_BASE}/event?page=${page}`).then(r => r.json());
 
 export const getEvent = (id) =>
   fetch(`${API_BASE}/event/${id}`).then(r => r.json())
@@ -9,14 +27,14 @@ export const getEvent = (id) =>
 export const createEvent = (body) =>
   fetch(`${API_BASE}/event/create`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+      headers: getHeaders(),
     body: JSON.stringify(body),
   }).then(r => r.json())
 
 export const updateEvent = (id, body) =>
   fetch(`${API_BASE}/event/update/${id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getHeaders(),
     body: JSON.stringify(body),
   }).then(r => r.json())
 
@@ -35,14 +53,14 @@ export const getCategories = () =>
 export const createCategory = (body) =>
   fetch(`${API_BASE}/category/create`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getHeaders(),
     body: JSON.stringify(body),
   }).then(r => r.json())
 
 export const updateCategory = (id, body) =>
   fetch(`${API_BASE}/category/update/${id}`, {
     method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getHeaders(),
     body: JSON.stringify(body),
   }).then(r => r.json())
 
