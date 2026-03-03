@@ -22,3 +22,23 @@ CREATE TABLE IF NOT EXISTS interaction (
     type       VARCHAR(50) CHECK (type IN ('click')),
     created_at TIMESTAMP DEFAULT NOW()
 );
+
+
+CREATE TABLE IF NOT EXISTS users (
+    id       SERIAL PRIMARY KEY,
+    name     VARCHAR(150) NOT NULL CHECK (TRIM(name) <> ''),
+    email    VARCHAR(255) UNIQUE NOT NULL CHECK (TRIM(email) <> ''),
+    password TEXT NOT NULL,
+    role     VARCHAR(20) NOT NULL DEFAULT 'Externo' CHECK (role IN ('Admin', 'Externo'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+
+
+CREATE TABLE IF NOT EXISTS favorites (
+    id         SERIAL PRIMARY KEY,
+    user_id    INTEGER NOT NULL REFERENCES users(id),
+    event_id   INTEGER NOT NULL REFERENCES event(id),
+    created_at TIMESTAMP DEFAULT NOW(),
+    UNIQUE (user_id, event_id)  -- un usuario no puede marcar el mismo evento dos veces
+);

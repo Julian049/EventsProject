@@ -11,5 +11,9 @@ router.patch('/interested/:id', eventController.interestEvent);
 router.get("/getAllInterested", eventController.getAllInterest);
 router.get('/:id', eventController.getEventById);
 
+router.post('/:id/favorite',           eventController.addFavorite);
+router.delete('/:id/favorite',         eventController.removeFavorite);
+router.get('/favorites/user/:userId',  eventController.getFavoritesByUser);
+router.get('/favorites/report',        eventController.getFavoritesReport);
 
 module.exports = router;

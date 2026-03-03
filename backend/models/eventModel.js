@@ -23,4 +23,24 @@ const disable = (id) => db.one(`UPDATE event
 const getById = (id) => db.one('SELECT * FROM event WHERE id = $(id)', {id});
 const interest = (id) => db.none("INSERT INTO interaction (event_id, type) VALUES ($1, 'click')", [id])
 const getAllInterests = () => db.any('SELECT * FROM interaction');
-module.exports = {getAll, create, update, disable, getById, interest, getAllInterests};
+
+const addFavorite    = (userId, eventId) => 
+    db.none('INSERT INTO favorites (user_id, event_id) VALUES ($1, $2)', [userId, eventId]);
+
+const removeFavorite = (userId, eventId) => 
+    db.none('DELETE FROM favorites WHERE user_id = $1 AND event_id = $2', [userId, eventId]);
+
+const getFavoritesByUser = (userId) => 
+    db.any('SELECT e.* FROM event e JOIN favorites f ON e.id = f.event_id WHERE f.user_id = $1', [userId]);
+
+const getFavoritesReport = () =>
+    db.any(`
+        SELECT e.id, e.name, COUNT(f.id) AS total_favorites
+        FROM event e
+        LEFT JOIN favorites f ON e.id = f.event_id
+        GROUP BY e.id, e.name
+        ORDER BY total_favorites DESC
+    `);
+
+module.exports = { getAll, create, update, disable, getById, interest, getAllInterests,
+                   addFavorite, removeFavorite, getFavoritesByUser, getFavoritesReport };

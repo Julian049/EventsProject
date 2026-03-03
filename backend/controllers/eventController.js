@@ -61,3 +61,44 @@ exports.getAllInterest = async (req, res) => {
         res.status(500).json({error: err.message});
     }
 }
+
+exports.addFavorite = async (req, res) => {
+    try {
+        const { id } = req.params;          // event_id
+        const { userId } = req.body;
+        await eventService.addFavorite(userId, id);
+        res.json({ message: "Evento guardado en favoritos" });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+}
+
+exports.removeFavorite = async (req, res) => {
+    try {
+        const { id } = req.params;          
+        const { userId } = req.body;
+        await eventService.removeFavorite(userId, id);
+        res.json({ message: "Evento eliminado de favoritos" });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+}
+
+exports.getFavoritesByUser = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const favorites = await eventService.getFavoritesByUser(userId);
+        res.json(favorites);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+}
+
+exports.getFavoritesReport = async (req, res) => {
+    try {
+        const report = await eventService.getFavoritesReport();
+        res.json(report);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+}

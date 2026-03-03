@@ -1,27 +1,32 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { getEvent, updateEvent, disableEvent, registerInterest } from '../api/api'
+import { getEvent, updateEvent, disableEvent, registerInterest, getCategories } from '../api/api'
 import Modal from '../components/Modal'
-import FormField from '../components/FormField'
+import EventForm from '../components/EventForm'
 import Spinner from '../components/Spinner'
 import styles from './DetailPage.module.css'
 
 export default function DetailPage() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const [event, setEvent]       = useState(null)
-  const [loading, setLoading]   = useState(true)
+  const [event, setEvent]         = useState(null)
+  const [loading, setLoading]     = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
-  const [saving, setSaving]     = useState(false)
+  const [saving, setSaving]       = useState(false)
   const [interested, setInterested] = useState(false)
+  const [categories, setCategories] = useState([])
   const [form, setForm] = useState({
-    name: '', date: '', description: '', image: '', price: ''
+    name: '', date: '', description: '', image: '', price: '', category_id: ''
   })
 
   async function load() {
     setLoading(true)
     try {
-      const data = await getEvent(id)
+      const [data, cats] = await Promise.all([
+        getEvent(id),
+        getCategories(),
+      ])
+      setCategories(cats)
       setEvent(data)
       setForm({
         name:        data.name || '',
@@ -29,6 +34,7 @@ export default function DetailPage() {
         description: data.description || '',
         image:       data.image || '',
         price:       data.price || '',
+        category_id: data.category_id || '',
       })
     } catch {
       setEvent(null)
@@ -48,7 +54,7 @@ export default function DetailPage() {
         date:        form.date || null,
         description: form.description || null,
         image:       form.image || null,
-        category_id: null,
+        category_id: form.category_id || null,
         price:       form.price || null,
       })
       setEvent(updated)
@@ -141,55 +147,15 @@ export default function DetailPage() {
       </div>
 
       <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Editar Evento">
-        <form onSubmit={handleSave}>
-          <FormField label="Nombre">
-            <input
-              className="field-input"
-              value={form.name}
-              onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-            />
-          </FormField>
-          <FormField label="Fecha">
-            <input
-              className="field-input"
-              type="datetime-local"
-              value={form.date}
-              onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
-            />
-          </FormField>
-          <FormField label="Descripción">
-            <textarea
-              className="field-input"
-              rows={3}
-              value={form.description}
-              onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-            />
-          </FormField>
-          <FormField label="Imagen (URL)">
-            <input
-              className="field-input"
-              value={form.image}
-              onChange={e => setForm(f => ({ ...f, image: e.target.value }))}
-              placeholder="https://..."
-            />
-          </FormField>
-          <FormField label="Precio">
-            <input
-              className="field-input"
-              type="number"
-              value={form.price}
-              onChange={e => setForm(f => ({ ...f, price: e.target.value }))}
-            />
-          </FormField>
-          <div className={styles.modalActions}>
-            <button type="button" className={styles.btnCancelModal} onClick={() => setModalOpen(false)}>
-              Cancelar
-            </button>
-            <button type="submit" className={styles.btnSaveModal} disabled={saving}>
-              {saving ? 'Guardando...' : 'Guardar'}
-            </button>
-          </div>
-        </form>
+        <EventForm
+          form={form}
+          setForm={setForm}
+          categories={categories}
+          onSubmit={handleSave}
+          onCancel={() => setModalOpen(false)}
+          saving={saving}
+          submitLabel="Guardar"
+        />
       </Modal>
     </div>
   )

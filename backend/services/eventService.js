@@ -31,3 +31,16 @@ exports.interestEvent = (id) => {
 exports.getAllInterest = () =>{
     return EventModel.getAllInterests();
 }
+
+exports.addFavorite = (userId, eventId) => 
+    EventModel.addFavorite(userId, eventId);
+
+exports.removeFavorite = (userId, eventId) => 
+    EventModel.removeFavorite(userId, eventId);
+
+
+exports.getFavoritesByUser = (userId) => 
+    EventModel.getFavoritesByUser(userId);
+
+exports.getFavoritesReport = () => 
+    EventModel.getFavoritesReport();
