@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+const Role = require('../constants/role');
 
 dotenv.config();
 
@@ -18,14 +19,14 @@ export function authenticateToken(req, res, next) {
 }
 
 export function adminAuthorized(req, res, next) {
-    if (req.user.role !== 'admin') {
+    if (req.user.role !== Role.admin) {
         return res.status(403).json({message: 'Acceso denegado'});
     }
     next();
 }
 
 export function updateUserAuthorized(req, res, next) {
-    if (Number(req.params.id) !== Number(req.user.id) && req.user.role !== 'Admin') {
+    if (Number(req.params.id) !== Number(req.user.id) && req.user.role !== Role.admin) {
         return res.status(403).json({message: 'Acceso denegado'});
     }
     next();
