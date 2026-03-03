@@ -3,13 +3,13 @@ const UserModel = require('../models/userModel');
 const bcryptUtil = require('../utils/bcrypt');
 
 exports.createUser = (user) => {
-    const newUser = {
+    const newUser = new User({
         name: user.name,
         email: user.email,
         password: bcryptUtil.hashPassword(user.password),
-        role: user.role,
-    }
-    return UserModel.create(newUser)
+        role: 'Externo', 
+    });
+    return UserModel.create(newUser);
 }
 
 exports.viewUsers = () => {
