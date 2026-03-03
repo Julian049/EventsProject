@@ -3,4 +3,4 @@ const Role = Object.freeze({
     user: 'Externo',
 })
 
-module.exports = Role
+export default Role;

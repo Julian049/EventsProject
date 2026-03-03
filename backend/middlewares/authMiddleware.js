@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-const Role = require('../constants/role');
+import Role from '../constants/role.js';
 
 dotenv.config();
 
