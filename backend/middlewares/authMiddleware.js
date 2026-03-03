@@ -18,9 +18,14 @@ export function authenticateToken(req, res, next) {
 }
 
 export function adminAuthorized(req, res, next) {
-    console.log(req.user);
-    console.log("El rol es: "+req.user.role);
     if (req.user.role !== 'admin') {
+        return res.status(403).json({message: 'Acceso denegado'});
+    }
+    next();
+}
+
+export function updateUserAuthorized(req, res, next) {
+    if (Number(req.params.id) !== Number(req.user.id) && req.user.role !== 'Admin') {
         return res.status(403).json({message: 'Acceso denegado'});
     }
     next();
