@@ -187,3 +187,28 @@
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+.cardMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.badgeActive {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #166534;
+  background: #dcfce7;
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+}
+
+.badgeInactive {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #991b1b;
+  background: #fee2e2;
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+}

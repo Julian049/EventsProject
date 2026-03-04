@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react'
 import {useNavigate} from 'react-router-dom'
-import {getEvents, createEvent, getCategories} from '../api/api'
+import {getEvents, getAllEvents, createEvent, getCategories} from '../api/api'
 import {useAuth} from '../context/AuthContext.jsx'
 import Modal from '../components/Modal'
 import EventForm from '../components/EventForm'
@@ -24,7 +24,7 @@ export default function EventsPage() {
     async function load(p = 1) {
         setLoading(true)
         try {
-            const json = await getEvents(p)
+            const json = role === 'Admin' ? await getAllEvents(p) : await getEvents(p)
             setEvents(json.data || [])
         } finally {
             setLoading(false)
@@ -36,8 +36,7 @@ export default function EventsPage() {
     }, [page])
 
     function openModal() {
-        getCategories().then(setCategories).catch(() => {
-        })
+        getCategories().then(setCategories).catch(() => {})
         setForm({name: '', date: '', description: '', image: '', category_id: '', price: ''})
         setModalOpen(true)
     }
@@ -68,11 +67,10 @@ export default function EventsPage() {
     return (
         <div className={styles.page}>
             <div className={styles.toolbar}>
-                <h1 className={styles.heading}>Todos los eventos</h1>
+                <h1 className={styles.heading}>{role === 'Admin' ? 'Todos los eventos' : 'Eventos activos'}</h1>
                 {role === 'Admin' && (
                     <button className={styles.btnAdd} onClick={openModal}>+ Añadir evento</button>
                 )}
-
             </div>
 
             {loading ? (
@@ -100,11 +98,18 @@ export default function EventsPage() {
                             <div className={styles.cardBody}>
                                 <p className={styles.cardTitle}>{ev.name}</p>
                                 <p className={styles.cardDesc}>{ev.description || ''}</p>
-                                {ev.date && (
-                                    <span className={styles.badge}>
-                    📅 {new Date(ev.date).toLocaleDateString('es-ES')}
-                  </span>
-                                )}
+                                <div className={styles.cardMeta}>
+                                    {ev.date && (
+                                        <span className={styles.badge}>
+                                            📅 {new Date(ev.date).toLocaleDateString('es-ES')}
+                                        </span>
+                                    )}
+                                    {role === 'Admin' && (
+                                        <span className={ev.status ? styles.badgeActive : styles.badgeInactive}>
+                                            {ev.status ? 'Activo' : 'Inactivo'}
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     ))}
@@ -131,7 +136,6 @@ export default function EventsPage() {
                 </div>
             )}
 
-            {/* ↓ Todo el <form> reemplazado por EventForm */}
             <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Nuevo Evento">
                 <EventForm
                     form={form}

@@ -5,10 +5,23 @@ exports.createEvent = async (req, res) => {
     res.json(newEvent);
 }
 
-exports.viewEvents = async (req, res) => {
+exports.viewActiveEvents = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;
-        const events = await eventService.viewEvents(page);
+        const events = await eventService.viewActiveEvents(page);
+        res.json({
+            page: page,
+            data: events
+        });
+    } catch (err) {
+        res.status(500).json({error: err.message});
+    }
+}
+
+exports.viewAllEvents = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const events = await eventService.viewAllEvents(page);
         res.json({
             page: page,
             data: events

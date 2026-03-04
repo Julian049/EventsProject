@@ -31,6 +31,11 @@ export const register = (body) =>
 export const getEvents = (page = 1) =>
     fetch(`${API_BASE}/event?page=${page}`).then(r => r.json());
 
+export const getAllEvents = (page = 1) =>
+    fetch(`${API_BASE}/event/all?page=${page}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    }).then(r => r.json());
+
 export const getEvent = (id) =>
     fetch(`${API_BASE}/event/${id}`).then(r => r.json())
 
