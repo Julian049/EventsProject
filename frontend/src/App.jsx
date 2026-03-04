@@ -7,9 +7,10 @@ import ReportPage    from './pages/ReportPage'
 import LoginPage     from './pages/LoginPage'
 import RegisterPage from "./pages/RegisterPage.jsx";
 
-const PrivateRoute = ({ children }) => {
+const PrivateRoute = ({ children, guestAllowed = false }) => {
     const token = localStorage.getItem('token');
-    if (!token) {
+    const isGuest = sessionStorage.getItem('guest') === 'true';
+    if (!token && !isGuest && !guestAllowed) {
         return <Navigate to="/login" replace />;
     }
     return children;

@@ -22,8 +22,8 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 20% 30%, rgba(249,115,22,0.18) 0%, transparent 55%),
-    radial-gradient(circle at 80% 70%, rgba(251,191,36,0.12) 0%, transparent 55%);
+          radial-gradient(circle at 20% 30%, rgba(249,115,22,0.18) 0%, transparent 55%),
+          radial-gradient(circle at 80% 70%, rgba(251,191,36,0.12) 0%, transparent 55%);
   pointer-events: none;
 }
 
@@ -232,6 +232,27 @@
 }
 
 .btnSubmit:disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* Botón invitado */
+.btnGuest {
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  color: var(--ink-mid);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.btnGuest:hover {
+  border-color: var(--ink-mid);
+  color: var(--ink);
+  background: rgba(15,23,42,0.04);
+}
 
 /* Spinner inline */
 .spinner {

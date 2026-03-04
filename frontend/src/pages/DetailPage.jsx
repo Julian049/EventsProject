@@ -141,13 +141,15 @@ export default function DetailPage() {
                   Deshabilitar
                 </button>
             )}
-            <button
-              className={`${styles.btnInterest} ${interested ? styles.btnInterestDone : ''}`}
-              onClick={handleInterest}
-              disabled={interested}
-            >
-              {interested ? '⭐ ¡Guardado!' : '☆ Me interesa'}
-            </button>
+            {(role === 'Admin' || role === 'Member') && (
+                <button
+                    className={`${styles.btnInterest} ${interested ? styles.btnInterestDone : ''}`}
+                    onClick={handleInterest}
+                    disabled={interested}
+                >
+                  {interested ? '⭐ ¡Guardado!' : '☆ Me interesa'}
+                </button>
+            )}
           </div>
         </div>
       </div>

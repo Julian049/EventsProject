@@ -117,6 +117,17 @@ export default function LoginPage({onLogin}) {
                         >
                             {loading ? <span className={styles.spinner}/> : 'Entrar'}
                         </button>
+
+                        <button
+                            type="button"
+                            className={styles.btnGuest}
+                            onClick={() => {
+                                sessionStorage.setItem('guest', 'true')
+                                navigate('/')
+                            }}
+                        >
+                            Acceder como invitado
+                        </button>
                     </form>
 
                     <p className={styles.hint}>
