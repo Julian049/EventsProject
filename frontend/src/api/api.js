@@ -18,6 +18,16 @@ export const login = (body) =>
         return r.json();
     });
 
+export const register = (body) =>
+    fetch(`${API_BASE}/users/create`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({...body, role: 'Externo'}),
+    }).then(async r => {
+        if (!r.ok) throw new Error('Error al crear la cuenta');
+        return r.json();
+    });
+
 export const getEvents = (page = 1) =>
     fetch(`${API_BASE}/event?page=${page}`).then(r => r.json());
 

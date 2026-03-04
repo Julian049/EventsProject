@@ -5,15 +5,13 @@ import CategoriesPage from './pages/CategoriesPage'
 import DetailPage    from './pages/DetailPage'
 import ReportPage    from './pages/ReportPage'
 import LoginPage     from './pages/LoginPage'
+import RegisterPage from "./pages/RegisterPage.jsx";
 
-// Componente guardián para proteger rutas privadas
 const PrivateRoute = ({ children }) => {
     const token = localStorage.getItem('token');
-    // Si no hay token, lo redirige al Login
     if (!token) {
         return <Navigate to="/login" replace />;
     }
-    // Si hay token, renderiza la página solicitada
     return children;
 };
 
@@ -22,7 +20,7 @@ export default function App() {
         <Routes>
             {/* Ruta pública */}
             <Route path="/login" element={<LoginPage />} />
-
+            <Route path="/register" element={<RegisterPage />} />
             {/* Rutas Privadas envueltas en el guardián */}
             <Route
                 path="/*"
