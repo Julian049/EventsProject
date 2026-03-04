@@ -22,7 +22,7 @@ export const register = (body) =>
     fetch(`${API_BASE}/users/create`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({...body, role: 'Externo'}),
+        body: JSON.stringify({...body, role: 'Member'}),
     }).then(async r => {
         if (!r.ok) throw new Error('Error al crear la cuenta');
         return r.json();
