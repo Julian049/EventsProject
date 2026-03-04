@@ -5,6 +5,13 @@ import {useAuth} from '../context/AuthContext.jsx'
 export default function Navbar() {
     const navigate = useNavigate()
     const {role} = useAuth()
+    const token = localStorage.getItem('token')
+
+    function handleLogout() {
+        localStorage.removeItem('token')
+        sessionStorage.removeItem('guest')
+        navigate('/login')
+    }
 
     return (
         <header className={styles.header}>
@@ -21,7 +28,7 @@ export default function Navbar() {
                 >
                     Inicio
                 </NavLink>
-                {role === 'Admin' && (
+                {token && role === 'Admin' && (
                     <NavLink
                         to="/categories"
                         className={({isActive}) =>
@@ -32,7 +39,7 @@ export default function Navbar() {
                     </NavLink>
                 )}
 
-                {role === 'Admin' && (
+                {token && role === 'Admin' && (
                     <NavLink
                         to="/report"
                         className={({isActive}) =>
@@ -42,6 +49,11 @@ export default function Navbar() {
                         Reporte
                     </NavLink>
                 )}
+
+                {token
+                    ? <button className={styles.btnLogin} onClick={handleLogout}>Cerrar sesión</button>
+                    : <button className={styles.btnLogin} onClick={() => navigate('/login')}>Iniciar sesión</button>
+                }
             </nav>
         </header>
     )
