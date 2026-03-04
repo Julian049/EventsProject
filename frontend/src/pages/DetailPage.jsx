@@ -5,6 +5,7 @@ import Modal from '../components/Modal'
 import EventForm from '../components/EventForm'
 import Spinner from '../components/Spinner'
 import styles from './DetailPage.module.css'
+import {useAuth} from "../context/AuthContext.jsx";
 
 export default function DetailPage() {
   const { id } = useParams()
@@ -18,6 +19,7 @@ export default function DetailPage() {
   const [form, setForm] = useState({
     name: '', date: '', description: '', image: '', price: '', category_id: ''
   })
+  const {role} = useAuth()
 
   async function load() {
     setLoading(true)
@@ -129,12 +131,16 @@ export default function DetailPage() {
           <p className={styles.desc}>{event.description || 'Sin descripción.'}</p>
 
           <div className={styles.actions}>
-            <button className={styles.btnEdit} onClick={() => setModalOpen(true)}>
-              ✏ Editar
-            </button>
-            <button className={styles.btnDisable} onClick={handleDisable}>
-              Deshabilitar
-            </button>
+            {role === 'Admin' && (
+                <button className={styles.btnEdit} onClick={() => setModalOpen(true)}>
+                  ✏ Editar
+                </button>
+            )}
+            {role === 'Admin' && (
+                <button className={styles.btnDisable} onClick={handleDisable}>
+                  Deshabilitar
+                </button>
+            )}
             <button
               className={`${styles.btnInterest} ${interested ? styles.btnInterestDone : ''}`}
               onClick={handleInterest}
