@@ -5,10 +5,6 @@ INSERT INTO category (name, description, status) VALUES
 ('Circo',       'Espectáculos circenses',       true),
 ('Conferencia', 'Charlas y conferencias',       true);
 
-
-INSERT INTO users (name, email, password, role) VALUES
-('Admin Principal', 'admin@eventos.com', '$2b$10$placeholderhashadmin', 'Admin');
-
 INSERT INTO event (name, date, description, image, category_id, price, status)
 SELECT
     'Evento #' || i,

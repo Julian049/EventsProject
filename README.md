@@ -105,7 +105,7 @@ El servidor queda disponible en `http://localhost:3250`.
   "role": "Admin"
 }
 ```
-> El rol siempre se asigna como `Externo` al momento del registro, independientemente del valor enviado.
+> El rol siempre se asigna como `Member` al momento del registro, independientemente del valor enviado.
 
 ---
 
