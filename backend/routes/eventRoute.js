@@ -5,7 +5,8 @@ const {getById} = require("../models/eventModel");
 const authentication = require("../middlewares/authMiddleware");
 
 router.post('/create', authentication.authenticateToken, authentication.adminAuthorized, eventController.createEvent);
-router.get('/', eventController.viewEvents);
+router.get('/', eventController.viewActiveEvents);
+router.get('/all', eventController.viewAllEvents);
 router.put('/update/:id', authentication.authenticateToken, authentication.adminAuthorized, eventController.updateEvent);
 router.patch('/disable/:id', authentication.authenticateToken, authentication.adminAuthorized, eventController.disableEvent);
 router.patch('/interested/:id', eventController.interestEvent);

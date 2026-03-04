@@ -1,7 +1,11 @@
 const db = require('../database');
 
-const getAll = (limit, offset) =>
+const getActive = (limit, offset) =>
     db.any('SELECT * FROM event WHERE status = true ORDER BY id LIMIT $1 OFFSET $2', [limit, offset]);
+
+const getAll = (limit, offset) =>
+    db.any('SELECT * FROM event ORDER BY id LIMIT $1 OFFSET $2', [limit, offset]);
+
 const create = (event) => db.one(`INSERT INTO event (name, date, description, image, category_id, price, status)
                                   VALUES ($(name), $(date), $(description), $(image), $(category_id),
                                           $(price), true)
@@ -42,5 +46,5 @@ const getFavoritesReport = () =>
         ORDER BY total_favorites DESC
     `);
 
-module.exports = { getAll, create, update, disable, getById, interest, getAllInterests,
+module.exports = { getAll, getActive, create, update, disable, getById, interest, getAllInterests,
                    addFavorite, removeFavorite, getFavoritesByUser, getFavoritesReport };

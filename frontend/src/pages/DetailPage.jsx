@@ -141,7 +141,7 @@ export default function DetailPage() {
                   Deshabilitar
                 </button>
             )}
-            {(role === 'Admin' || role === 'Member') && (
+            {(role === 'Member') && (
                 <button
                     className={`${styles.btnInterest} ${interested ? styles.btnInterestDone : ''}`}
                     onClick={handleInterest}

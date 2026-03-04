@@ -6,7 +6,13 @@ exports.createEvent = (event) => {
     return EventModel.create(newEvent)
 }
 
-exports.viewEvents = async (page) => {
+exports.viewActiveEvents = async (page) => {
+    const limit = 10;
+    const offset = (page - 1) * limit;
+    return EventModel.getActive(limit, offset);
+}
+
+exports.viewAllEvents = async (page) => {
     const limit = 10;
     const offset = (page - 1) * limit;
     return EventModel.getAll(limit, offset);
