@@ -120,9 +120,9 @@ export default function LoginPage({onLogin}) {
                     </form>
 
                     <p className={styles.hint}>
-                        ¿Olvidaste tu contraseña?{' '}
-                        <button className={styles.linkBtn} onClick={() => alert('Funcionalidad próximamente')}>
-                            Recupérala aquí
+                        ¿No tienes una cuenta?{' '}
+                        <button className={styles.linkBtn} onClick={() => navigate('/register')}>
+                            Regístrate
                         </button>
                     </p>
                 </div>
