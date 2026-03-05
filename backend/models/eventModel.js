@@ -26,7 +26,6 @@ const disable = (id) => db.one(`UPDATE event
 
 const getById = (id) => db.one('SELECT * FROM event WHERE id = $(id)', {id});
 const interest = (id) => db.none("INSERT INTO interaction (event_id, type) VALUES ($1, 'click')", [id])
-const removeInterest = (id) => db.none("DELETE FROM interaction WHERE id = (SELECT id FROM interaction WHERE event_id = $1 ORDER BY created_at DESC LIMIT 1)", [id])
 const getAllInterests = () => db.any('SELECT * FROM interaction');
 
 const addFavorite    = (userId, eventId) => 

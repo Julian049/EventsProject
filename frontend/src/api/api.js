@@ -92,3 +92,6 @@ export const updateCategory = (id, body) =>
 
 export const disableCategory = (id) =>
     fetch(`${API_BASE}/category/disable/${id}`, {method: 'PATCH', headers: getHeaders()})
+
+export const registerClick = (id) =>
+  fetch(`${API_BASE}/event/interested/${id}`, { method: 'PATCH' })

@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react'
 import {useNavigate} from 'react-router-dom'
-import {getEvents, getAllEvents, createEvent, getCategories} from '../api/api'
+import {getEvents, getAllEvents, createEvent, getCategories, register, registerClick} from '../api/api'
 import {useAuth} from '../context/AuthContext.jsx'
 import Modal from '../components/Modal'
 import EventForm from '../components/EventForm'
@@ -84,7 +84,10 @@ export default function EventsPage() {
                             key={ev.id}
                             className={styles.card}
                             style={{animationDelay: `${i * 0.05}s`}}
-                            onClick={() => navigate(`/event/${ev.id}`)}
+                            onClick={() => {
+                                registerClick(ev.id)
+                                navigate(`/event/${ev.id}`)
+                            }}
                         >
                             <div className={styles.imgWrap}>
                                 <img

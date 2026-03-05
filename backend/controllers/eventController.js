@@ -65,16 +65,7 @@ exports.interestEvent = async (req, res) => {
     }
 }
 
-exports.removeInterest = async (req, res) => {
-    try {
-        const {id} = req.params;
-        await eventService.removeInterest(id);
-        res.json({message: "Interés eliminado correctamente"});
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({error: err.message});
-    }
-}
+
 
 exports.getAllInterest = async (req, res) => {
     try {
