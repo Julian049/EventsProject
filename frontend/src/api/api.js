@@ -57,7 +57,16 @@ export const disableEvent = (id) =>
     fetch(`${API_BASE}/event/disable/${id}`, {method: 'PATCH', headers: getHeaders()})
 
 export const registerInterest = (id) =>
-    fetch(`${API_BASE}/event/interested/${id}`, {method: 'PATCH'})
+  fetch(`${API_BASE}/event/${id}/favorite`, {
+    method: 'POST',
+    headers: getHeaders()
+  })
+
+export const unregisterInterest = (id) =>
+  fetch(`${API_BASE}/event/${id}/favorite`, {
+    method: 'DELETE',
+    headers: getHeaders()
+  })
 
 export const getAllInterested = () =>
     fetch(`${API_BASE}/event/getAllInterested`, {

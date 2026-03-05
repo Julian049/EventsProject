@@ -34,6 +34,10 @@ exports.interestEvent = (id) => {
     return EventModel.interest(id);
 }
 
+exports.removeInterest = (id) => {
+    return EventModel.removeInterest(id);
+}
+
 exports.getAllInterest = () =>{
     return EventModel.getAllInterests();
 }

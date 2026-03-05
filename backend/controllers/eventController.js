@@ -65,6 +65,17 @@ exports.interestEvent = async (req, res) => {
     }
 }
 
+exports.removeInterest = async (req, res) => {
+    try {
+        const {id} = req.params;
+        await eventService.removeInterest(id);
+        res.json({message: "Interés eliminado correctamente"});
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({error: err.message});
+    }
+}
+
 exports.getAllInterest = async (req, res) => {
     try {
         const interests = await eventService.getAllInterest();
@@ -77,8 +88,8 @@ exports.getAllInterest = async (req, res) => {
 
 exports.addFavorite = async (req, res) => {
     try {
-        const { id } = req.params;          // event_id
-        const { userId } = req.body;
+        const { id } = req.params;
+        const userId = req.user.id; 
         await eventService.addFavorite(userId, id);
         res.json({ message: "Evento guardado en favoritos" });
     } catch (err) {
@@ -88,8 +99,8 @@ exports.addFavorite = async (req, res) => {
 
 exports.removeFavorite = async (req, res) => {
     try {
-        const { id } = req.params;          
-        const { userId } = req.body;
+        const { id } = req.params;
+        const userId = req.user.id; 
         await eventService.removeFavorite(userId, id);
         res.json({ message: "Evento eliminado de favoritos" });
     } catch (err) {
