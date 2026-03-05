@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { getEvent, updateEvent, disableEvent, registerInterest, getCategories } from '../api/api'
+import { getEvent, updateEvent, disableEvent, registerInterest, unregisterInterest, getCategories } from '../api/api'
 import Modal from '../components/Modal'
 import EventForm from '../components/EventForm'
 import Spinner from '../components/Spinner'
@@ -78,14 +78,21 @@ export default function DetailPage() {
     }
   }
 
-  async function handleInterest() {
-    try {
-      await registerInterest(id)
-      setInterested(true)
-    } catch {
-      alert('Error al registrar el interés.')
+ async function handleInterest() {
+  try {
+    if (interested) {
+      const res = await unregisterInterest(id)
+      console.log('unregister status:', res.status)
+    } else {
+      const res = await registerInterest(id)
+      console.log('register status:', res.status)
     }
+    setInterested(prev => !prev)
+  } catch (err) {
+    console.error('Error completo:', err)
+    alert('Error al actualizar el interés.')
   }
+}
 
   if (loading) return <Spinner />
 
@@ -145,7 +152,6 @@ export default function DetailPage() {
                 <button
                     className={`${styles.btnInterest} ${interested ? styles.btnInterestDone : ''}`}
                     onClick={handleInterest}
-                    disabled={interested}
                 >
                   {interested ? '⭐ ¡Guardado!' : '☆ Me interesa'}
                 </button>
