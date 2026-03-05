@@ -10,7 +10,6 @@ router.get('/all', eventController.viewAllEvents);
 router.put('/update/:id', authentication.authenticateToken, authentication.adminAuthorized, eventController.updateEvent);
 router.patch('/disable/:id', authentication.authenticateToken, authentication.adminAuthorized, eventController.disableEvent);
 router.patch('/interested/:id', eventController.interestEvent);
-router.delete('/interested/:id', eventController.removeInterest); // Por verificar
 router.get("/getAllInterested", authentication.authenticateToken, authentication.adminAuthorized, eventController.getAllInterest);
 router.get('/:id', eventController.getEventById);
 
