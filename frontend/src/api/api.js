@@ -95,3 +95,9 @@ export const disableCategory = (id) =>
 
 export const registerClick = (id) =>
   fetch(`${API_BASE}/event/interested/${id}`, { method: 'PATCH' })
+
+
+export const getUserFavorites = (userId) =>
+  fetch(`${API_BASE}/event/favorites/user/${userId}`, {
+    headers: getHeaders(),
+  }).then(r => r.json())

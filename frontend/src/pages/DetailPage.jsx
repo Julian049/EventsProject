@@ -1,11 +1,20 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { getEvent, updateEvent, disableEvent, registerInterest, unregisterInterest, getCategories } from '../api/api'
+import { getEvent, updateEvent, disableEvent, registerInterest, unregisterInterest, getCategories, getUserFavorites } from '../api/api'
 import Modal from '../components/Modal'
 import EventForm from '../components/EventForm'
 import Spinner from '../components/Spinner'
 import styles from './DetailPage.module.css'
 import {useAuth} from "../context/AuthContext.jsx";
+
+
+function getUserIdFromToken() {
+  const token = localStorage.getItem('token')
+  if (!token) return null
+  try {
+    return JSON.parse(atob(token.split('.')[1]))?.id || null
+  } catch { return null }
+}
 
 export default function DetailPage() {
   const { id } = useParams()
@@ -24,12 +33,15 @@ export default function DetailPage() {
   async function load() {
     setLoading(true)
     try {
-      const [data, cats] = await Promise.all([
+      const userId = getUserIdFromToken()
+      const [data, cats,favorites] = await Promise.all([
         getEvent(id),
         getCategories(),
+        userId ? getUserFavorites(userId) : Promise.resolve([]),
       ])
       setCategories(cats)
       setEvent(data)
+      setInterested(favorites.some(f => f.id === Number(id)))
       setForm({
         name:        data.name || '',
         date:        data.date ? data.date.slice(0, 16) : '',
