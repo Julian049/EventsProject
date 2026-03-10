@@ -115,3 +115,19 @@
   .heading { font-size: 1.6rem; }
   .table th, .table td { padding: 12px 14px; }
 }
+
+.btnToggle {
+  margin-top: 1rem;
+  padding: 0.5rem 1.25rem;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btnToggle:hover {
+  background: var(--ink);
+  color: white;
+}
