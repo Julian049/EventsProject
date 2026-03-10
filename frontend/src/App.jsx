@@ -5,7 +5,8 @@ import CategoriesPage from './pages/CategoriesPage'
 import DetailPage    from './pages/DetailPage'
 import ReportPage    from './pages/ReportPage'
 import LoginPage     from './pages/LoginPage'
-import RegisterPage from "./pages/RegisterPage.jsx";
+import RegisterPage from "./pages/RegisterPage.jsx"
+import FavoritesPage from './pages/FavoritesPage';
 
 const PrivateRoute = ({ children, guestAllowed = false }) => {
     const token = localStorage.getItem('token');
@@ -34,6 +35,7 @@ export default function App() {
                                 <Route path="/categories" element={<CategoriesPage />} />
                                 <Route path="/event/:id"  element={<DetailPage />} />
                                 <Route path="/report"     element={<ReportPage />} />
+                                <Route path="/favorites" element={<FavoritesPage />} />
                             </Routes>
                         </main>
                     </PrivateRoute>

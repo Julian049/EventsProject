@@ -50,6 +50,17 @@ export default function Navbar() {
                     </NavLink>
                 )}
 
+                {token && role === 'Member' && (
+                    <NavLink
+                        to="/favorites"
+                        className={({isActive}) =>
+                            isActive ? `${styles.link} ${styles.active}` : styles.link
+                        }
+                    >
+                        Mis favoritos
+                    </NavLink>
+                )}
+
                 {token
                     ? <button className={styles.btnLogin} onClick={handleLogout}>Cerrar sesión</button>
                     : <button className={styles.btnLogin} onClick={() => navigate('/login')}>Iniciar sesión</button>
