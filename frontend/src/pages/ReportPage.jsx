@@ -1,21 +1,27 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { getEvents, getAllInterested } from '../api/api'
+import { getAllInterested, getFavoritesReport } from '../api/api'
 import Spinner from '../components/Spinner'
 import styles from './ReportPage.module.css'
 
+const TOP = 10
+
 export default function ReportPage() {
-  const [rows, setRows]     = useState([])
-  const [loading, setLoading] = useState(true)
+  const [clickRows, setClickRows]         = useState([])
+  const [favoriteRows, setFavoriteRows]   = useState([])
+  const [loading, setLoading]             = useState(true)
+  const [showAllClicks, setShowAllClicks] = useState(false)
+  const [showAllFavs, setShowAllFavs]     = useState(false)
 
   useEffect(() => {
     async function load() {
       try {
-        const [eventsJson, interests] = await Promise.all([
-          getEvents(1),
+        const [interests, favorites] = await Promise.all([
           getAllInterested(),
+          getFavoritesReport(),
         ])
 
+        // Reporte clicks: agrupar por event_id
         const countMap = {}
         interests.forEach(i => {
           if (i.type === 'click') {
@@ -23,13 +29,19 @@ export default function ReportPage() {
           }
         })
 
-        const sorted = [...(eventsJson.data || [])].sort(
-          (a, b) => (countMap[b.id] || 0) - (countMap[a.id] || 0)
-        )
+        // Usar favorites como fuente de nombres (tiene todos los eventos)
+        const clicksSorted = favorites
+          .map(ev => ({ ...ev, count: countMap[ev.id] || 0 }))
+          .sort((a, b) => b.count - a.count)
 
-        setRows(sorted.map(ev => ({ ...ev, count: countMap[ev.id] || 0 })))
+        setClickRows(clicksSorted)
+
+        // Reporte favoritos
+        setFavoriteRows(favorites.map(ev => ({ ...ev, count: Number(ev.total_favorites) })))
+
       } catch {
-        setRows([])
+        setClickRows([])
+        setFavoriteRows([])
       } finally {
         setLoading(false)
       }
@@ -37,29 +49,24 @@ export default function ReportPage() {
     load()
   }, [])
 
-  const maxCount = rows.length > 0 ? Math.max(...rows.map(r => r.count), 1) : 1
+  const maxClicks    = clickRows.length    > 0 ? Math.max(...clickRows.map(r => r.count), 1)    : 1
+  const maxFavorites = favoriteRows.length > 0 ? Math.max(...favoriteRows.map(r => r.count), 1) : 1
 
-  return (
-    <div className={styles.page}>
-      <h1 className={styles.heading}>Reporte de Intereses</h1>
-      <p className={styles.sub}>Eventos ordenados por cantidad de "Me interesa"</p>
-
-      {loading ? (
-        <Spinner />
-      ) : rows.length === 0 ? (
-        <p className={styles.empty}>No hay datos para mostrar.</p>
-      ) : (
+  const RankingTable = ({ rows, maxCount, showAll, onToggle }) => {
+    const visible = showAll ? rows : rows.slice(0, TOP)
+    return (
+      <>
         <div className={styles.tableWrap}>
           <table className={styles.table}>
             <thead>
               <tr>
                 <th>#</th>
                 <th>Evento</th>
-                <th>Me interesa</th>
+                <th>Total</th>
               </tr>
             </thead>
             <tbody>
-              {rows.map((row, i) => (
+              {visible.map((row, i) => (
                 <tr key={row.id} className={styles.row} style={{ animationDelay: `${i * 0.04}s` }}>
                   <td className={styles.rank}>#{i + 1}</td>
                   <td className={styles.name}>
@@ -79,6 +86,39 @@ export default function ReportPage() {
             </tbody>
           </table>
         </div>
+        {rows.length > TOP && (
+          <button className={styles.btnToggle} onClick={onToggle}>
+            {showAll ? `▲ Mostrar solo Top ${TOP}` : `▼ Ver todos (${rows.length})`}
+          </button>
+        )}
+      </>
+    )
+  }
+
+  return (
+    <div className={styles.page}>
+      {loading ? (
+        <Spinner />
+      ) : (
+        <>
+          <section>
+            <h1 className={styles.heading}>Reporte de Clicks</h1>
+            <p className={styles.sub}>Eventos ordenados por cantidad de clicks recibidos</p>
+            {clickRows.length === 0
+              ? <p className={styles.empty}>No hay datos para mostrar.</p>
+              : <RankingTable rows={clickRows} maxCount={maxClicks} showAll={showAllClicks} onToggle={() => setShowAllClicks(v => !v)} />
+            }
+          </section>
+
+          <section style={{ marginTop: '3rem' }}>
+            <h1 className={styles.heading}>Reporte de Favoritos</h1>
+            <p className={styles.sub}>Eventos ordenados por cantidad de "Me interesa"</p>
+            {favoriteRows.length === 0
+              ? <p className={styles.empty}>No hay datos para mostrar.</p>
+              : <RankingTable rows={favoriteRows} maxCount={maxFavorites} showAll={showAllFavs} onToggle={() => setShowAllFavs(v => !v)} />
+            }
+          </section>
+        </>
       )}
     </div>
   )
