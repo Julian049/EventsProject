@@ -7,17 +7,5 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
-    proxy: {
-      '/event': {
-        target: 'http://localhost:3250',
-        changeOrigin: true,
-        secure: false
-      },
-      '/category': {
-        target: 'http://localhost:3250',
-        changeOrigin: true,
-        secure: false
-      }
-    }
   }
 })
