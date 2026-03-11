@@ -107,3 +107,11 @@ export const getUserFavorites = (userId) =>
   fetch(`${API_BASE}/event/favorites/report`, {
     headers: getHeaders(),
   }).then(r => r.json())
+
+
+  export const updateUser = (id, body) =>
+  fetch(`${API_BASE}/users/update/${id}`, {
+    method: 'PUT',
+    headers: getHeaders(),
+    body: JSON.stringify(body),
+  }).then(r => r.json())
