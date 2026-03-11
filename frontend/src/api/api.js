@@ -115,3 +115,9 @@ export const getUserFavorites = (userId) =>
     headers: getHeaders(),
     body: JSON.stringify(body),
   }).then(r => r.json())
+
+
+  export const getUsers = () =>
+  fetch(`${API_BASE}/users/`, {
+    headers: getHeaders(),
+  }).then(r => r.json())
