@@ -25,8 +25,8 @@ const disable = (id) => db.one(`UPDATE events
                                 RETURNING *`, {id});
 
 const getById = (id) => db.one('SELECT * FROM events WHERE id = $(id)', {id});
-const interest = (id) => db.none("INSERT INTO interaction (event_id, type) VALUES ($1, 'click')", [id])
-const getAllInterests = () => db.any('SELECT * FROM interaction');
+const interest = (id) => db.none("INSERT INTO interactions (event_id, type) VALUES ($1, 'click')", [id])
+const getAllInterests = () => db.any('SELECT * FROM interactions');
 
 const addFavorite    = (userId, eventId) => 
     db.none('INSERT INTO favorites (user_id, event_id) VALUES ($1, $2)', [userId, eventId]);
