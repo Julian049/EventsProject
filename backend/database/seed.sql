@@ -1,11 +1,11 @@
-INSERT INTO category (name, description, status) VALUES
+INSERT INTO categories (name, description, status) VALUES
 ('Música',      'Conciertos y festivales',     true),
 ('Deportes',    'Eventos deportivos',           true),
 ('Teatro',      'Obras y espectáculos',         true),
 ('Circo',       'Espectáculos circenses',       true),
 ('Conferencia', 'Charlas y conferencias',       true);
 
-INSERT INTO event (name, date, description, image, category_id, price, status)
+INSERT INTO events (name, date, description, image, category_id, price, status)
 SELECT
     'Evento #' || i,
     NOW() + (i || ' days')::interval,
