@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS events
     category_id INTEGER REFERENCES categories (id),
     price       NUMERIC(10, 2) CHECK (price >= 0),
     status      VARCHAR(20)  NOT NULL DEFAULT 'Active'
-        CHECK (status IN ('Active', 'Sold_out', 'Past'))
+        CHECK (status IN ('Active', 'Sold_out', 'Inactive'))
 );
 
 CREATE TABLE IF NOT EXISTS ticket_types
