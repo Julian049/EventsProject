@@ -5,9 +5,6 @@ const create = (ticketType) => db.one(`
     INSERT INTO ticket_types (name)
     VALUES ($(name))
     RETURNING *`, ticketType);
-/**
- * @returns {Promise<Array<{ name: string }>>}
- */
 const getAll = () => db.any('SELECT * FROM ticket_types');
 
 module.exports = {getById, create, getAll};

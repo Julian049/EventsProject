@@ -15,3 +15,16 @@ exports.createTicketType = async (ticketType) => {
 
     return TicketTypeModel.create(newTicketType);
 }
+
+exports.getAll = async () => {
+    const tickets = await TicketTypeModel.getAll();
+    return tickets;
+}
+
+exports.getById = async (id) => {
+    const ticket = await TicketTypeModel.getById(id)
+    if (!ticket) {
+        throw new Error('El tipo de entrada no existe');
+    }
+    return ticket;
+}
