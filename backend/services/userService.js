@@ -1,7 +1,6 @@
 const User = require('../models/user');
 const UserModel = require('../models/userModel');
 const bcryptUtil = require('../utils/bcrypt');
-const Role = require('../constants/role');
 
 exports.createUser = (user) => {
     const newUser = new User({

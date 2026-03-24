@@ -1,0 +1,37 @@
+name: Pipeline de Calidad
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  # Validar el Frontend
+  frontend-job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Instalar y Probar Front
+        run: |
+          cd frontend
+          npm install
+          npm run lint
+          npm run build
+
+  # Validar el Backend
+  backend-job:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Instalar y Probar Back
+        run: |
+          cd backend
+          npm install
+          npm run lint --if-present
