@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint ."
   },
   "author": "Julian Bocanegra, Diego Gil",
   "license": "ISC",
@@ -16,5 +16,10 @@
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "pg-promise": "^12.6.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.3",
+    "globals": "^17.4.0"
   }
 }
