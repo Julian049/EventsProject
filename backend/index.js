@@ -20,5 +20,6 @@ app.use('/users', require("./routes/userRoute"));
 app.use('/auth', require("./routes/authRoute"));
 app.use('/purchase', require("./routes/purchaseRoute"));
 app.use('/ticketType', require("./routes/ticketTypeRoute"));
+app.use('/eventTicketType', require("./routes/eventTicketTypeRoute"));
 
 app.listen(port, () => console.log("Server running on port " + port));

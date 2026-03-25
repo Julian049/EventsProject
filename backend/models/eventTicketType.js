@@ -1,11 +1,11 @@
 class EventTicketType {
-    constructor({ id = null, event_id = null, price, total_quantity, available_quantity = null, ticket_type }) {
+    constructor({id = null, eventId, price, totalQuantity, availableQuantity = null, ticketTypeId}) {
         this.id = id;
-        this.event_id = event_id;
+        this.eventId = eventId;
         this.price = price;
-        this.total_quantity = total_quantity;
-        this.available_quantity = available_quantity ?? total_quantity;
-        this.ticket_type = ticket_type;
+        this.totalQuantity = totalQuantity;
+        this.availableQuantity = availableQuantity;
+        this.ticketTypeId = ticketTypeId;
     }
 }
 
