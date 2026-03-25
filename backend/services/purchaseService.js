@@ -1,37 +1,56 @@
 const Purchase = require('../models/purchase');
 const PurchaseModel = require('../models/purchaseModel');
+const UserModel = require('../models/userModel');
 const EventModel = require('../models/eventModel');
 const EventTicketTypeModel = require('../models/eventTicketTypeModel');
+const Role = require('../constants/role');
 
-exports.createPurchase = async (purchase) => {
-    console.log("00");
-    const newPurchase = new Purchase(purchase);
+exports.createPurchase = async ({userId, eventId, ticketTypeId, quantity}) => {
     let out;
 
-    console.log("01");
-    const event_ticket_type = await EventTicketTypeModel.getById(purchase.event_ticket_type_id);
-    console.log("02");
+    console.log(eventId)
+    console.log(userId)
 
-    const event = await EventModel.getById(event_ticket_type.event_id);
+    console.log("5")
+    console.log("6")
+    const event = await EventModel.getById(eventId);
+    const user = await UserModel.getById(userId);
+    console.log(user)
 
-    console.log("1");
-
-    if (!event) {
+    if (!event)
         throw new Error('Evento no encontrado');
-    }
 
-    console.log("2");
+    const eventTicketType = await EventTicketTypeModel.getByIds(eventId, ticketTypeId)
+    const actualQuantity = parseInt(eventTicketType.availableQuantity)
+    const price = parseFloat(eventTicketType.price);
 
+    console.log("7")
     if (event.status === 'Active') {
-        newPurchase.total_amount = event_ticket_type.price * purchase.quantity;
-        console.log("3");
-        if (newPurchase.quantity > 0) {
-            out = PurchaseModel.create(newPurchase);
+        console.log("8")
+        console.log("Rol: "+ user.role)
+        console.log("Rol 2: " + Role.user)
+        if (user.role === Role.user) {
+            console.log("9")
+            if (quantity <= actualQuantity) {
+                console.log("10")
+                const newPurchase = new Purchase({
+                    userId,
+                    eventTicketTypeId: eventTicketType.id,
+                    quantity,
+                    totalAmount: quantity * price,
+                });
+                console.log("11")
+                out = await PurchaseModel.create(newPurchase);
+            }else {
+                throw new Error('No hay suficientes tickets disponibles');
+            }
+        } else {
+            throw new Error('Rol de usuario no valido para comprar');
         }
-        console.log("4");
     } else {
-        throw new Error('Evento no disponible para compra');
+        throw new Error('Evento no activo');
     }
+
 
     return out
 }

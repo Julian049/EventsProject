@@ -4,4 +4,4 @@ const Role = Object.freeze({
     guest: 'Guest',
 })
 
-export default Role;
+module.exports = Role;

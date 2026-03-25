@@ -1,12 +1,12 @@
 class Purchase {
-    constructor({ id = null, user_id, event_ticket_type_id, quantity, total_amount, status = 'pending', created_at = null }) {
+    constructor({ id = null, userId, eventTicketTypeId, quantity, totalAmount, status = 'pending', createdAt = null }) {
         this.id = id;
-        this.user_id = user_id;
-        this.event_ticket_type_id = event_ticket_type_id;
+        this.userId = userId;
+        this.eventTicketTypeId = eventTicketTypeId;
         this.quantity = quantity;
-        this.total_amount = total_amount;
+        this.totalAmount = totalAmount;
         this.status = status;
-        this.created_at = created_at;
+        this.createdAt = createdAt;
     }
 }
 

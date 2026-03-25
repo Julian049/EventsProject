@@ -1,10 +1,17 @@
 const db = require('../database');
 
 const getByUser = (user) => db.any('SELECT * FROM purchases WHERE user_id = $(user)', {user});
-const getByEvent = (event) => db.any('SELECT * FROM purchases p, event_ticket_types et WHERE p.event_ticket_type_id = et.id AND et.event_id = $(event)', {event});
 const getById = (id) => db.oneOrNone('SELECT * FROM purchases WHERE id = $(id)', {id});
 const create = (purchase) => db.one(`INSERT INTO purchases (user_id, event_ticket_type_id, quantity, total_amount)
-                                     VALUES ($(user_id), $(event_ticket_type_id), $(quantity), $(total_amount))
-                                     RETURNING *`, purchase)
+                                     VALUES ($(userId), $(eventTicketTypeId), $(quantity), $(totalAmount))
+                                     RETURNING
+                                         id,
+                                         user_id AS "userId",
+                                         event_ticket_type_id AS "eventTicketTypeId",
+                                         quantity,
+                                         total_amount AS "totalAmount",
+                                         status,
+                                         created_at AS "createdAt"`, purchase)
+const getAll = () => db.any('SELECT * FROM purchases');
 
-module.exports = {getByUser, getById, getByEvent, create};
+module.exports = {getByUser, getById, getAll, create};
