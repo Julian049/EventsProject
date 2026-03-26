@@ -1,6 +1,6 @@
 // src/components/EventForm.jsx
 import { useRef, useEffect } from 'react'
-import FormField from './FormField'
+import FormField from '../FormField/FormField'
 
 function setMinDate(ref) {
   if (!ref.current) return

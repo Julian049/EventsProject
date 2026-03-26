@@ -1,10 +1,10 @@
 import {useState, useEffect} from 'react'
 import {useNavigate} from 'react-router-dom'
-import {getEvents, getAllEvents, createEvent, getCategories, register, registerClick} from '../api/api'
-import {useAuth} from '../context/AuthContext.jsx'
-import Modal from '../components/Modal'
-import EventForm from '../components/EventForm'
-import Spinner from '../components/Spinner'
+import {getEvents, getAllEvents, createEvent, getCategories, register, registerClick} from '../../services'
+import {useAuth} from '../../context/AuthContext'
+import Modal from '../../components/Modal/Modal'
+import EventForm from '../../components/EventForm/EventForm'
+import Spinner from '../../components/Spinner/Spinner'
 import styles from './EventsPage.module.css'
 
 export default function EventsPage() {

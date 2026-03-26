@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { getAllInterested, getFavoritesReport, getUsers } from '../api/api'
-import Spinner from '../components/Spinner'
+import { getAllInterested, getFavoritesReport, getUsers } from '../../services'
+import Spinner from '../../components/Spinner/Spinner'
 import styles from './ReportPage.module.css'
 
 const TOP = 10

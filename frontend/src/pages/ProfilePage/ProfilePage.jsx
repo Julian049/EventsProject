@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { updateUser } from '../api/api'
-import FormField from '../components/FormField'
-import styles from './LoginPage.module.css'
+import { updateUser } from '../../services'
+import FormField from '../../components/FormField/FormField'
+import styles from '../LoginPage/LoginPage.module.css'
 
 function getDataFromToken() {
   const token = localStorage.getItem('token')

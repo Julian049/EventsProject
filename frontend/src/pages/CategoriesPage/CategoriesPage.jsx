@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { getCategories, createCategory, updateCategory, disableCategory } from '../api/api'
-import Modal from '../components/Modal'
-import FormField from '../components/FormField'
-import Spinner from '../components/Spinner'
+import { getCategories, createCategory, updateCategory, disableCategory } from '../../services'
+import Modal from '../../components/Modal/Modal'
+import FormField from '../../components/FormField/FormField'
+import Spinner from '../../components/Spinner/Spinner'
 import styles from './CategoriesPage.module.css'
 
 export default function CategoriesPage() {
