@@ -1,10 +1,10 @@
 class Ticket {
-    constructor({ id = null, purchase_id, qr_code, status = 'active', created_at = null }) {
+    constructor({ id = null, purchaseId, qrCode, status = 'Active', createdAt = null }) {
         this.id = id;
-        this.purchase_id = purchase_id;
-        this.qr_code = qr_code;
+        this.purchaseId = purchaseId;
+        this.qrCode = qrCode;
         this.status = status;
-        this.created_at = created_at;
+        this.createdAt = createdAt;
     }
 }
 
