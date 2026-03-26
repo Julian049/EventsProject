@@ -1,8 +1,8 @@
 import {useState} from 'react'
-import {login} from '../api/api'
+import {login} from '../../services'
 import {useNavigate} from 'react-router-dom'
 import styles from './LoginPage.module.css'
-import {useAuth} from '../context/AuthContext.jsx'
+import {useAuth} from '../../context/AuthContext'
 
 export default function LoginPage({onLogin}) {
     const navigate = useNavigate()

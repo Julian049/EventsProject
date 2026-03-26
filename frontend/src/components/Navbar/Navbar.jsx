@@ -1,6 +1,6 @@
 import {NavLink, useNavigate} from 'react-router-dom'
 import styles from './Navbar.module.css'
-import {useAuth} from '../context/AuthContext.jsx'
+import {useAuth} from '../../context/AuthContext'
 
 export default function Navbar() {
     const navigate = useNavigate()

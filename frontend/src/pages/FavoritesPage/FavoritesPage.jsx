@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getUserFavorites, registerClick } from '../api/api'
-import Spinner from '../components/Spinner'
-import styles from './EventsPage.module.css'
+import { getUserFavorites, registerClick } from '../../services'
+import Spinner from '../../components/Spinner/Spinner'
+import styles from '../EventsPage/EventsPage.module.css'
 
 function getUserIdFromToken() {
   const token = localStorage.getItem('token')

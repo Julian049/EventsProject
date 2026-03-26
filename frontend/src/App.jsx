@@ -1,13 +1,13 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
-import Navbar        from './components/Navbar'
-import EventsPage    from './pages/EventsPage'
-import CategoriesPage from './pages/CategoriesPage'
-import DetailPage    from './pages/DetailPage'
-import ReportPage    from './pages/ReportPage'
-import LoginPage     from './pages/LoginPage'
-import RegisterPage from "./pages/RegisterPage.jsx"
-import FavoritesPage from './pages/FavoritesPage'
-import ProfilePage from './pages/ProfilePage.jsx';
+import Navbar        from './components/Navbar/Navbar'
+import EventsPage    from './pages/EventsPage/EventsPage'
+import CategoriesPage from './pages/CategoriesPage/CategoriesPage'
+import DetailPage    from './pages/DetailPage/DetailPage'
+import ReportPage    from './pages/ReportPage/ReportPage'
+import LoginPage     from './pages/LoginPage/LoginPage'
+import RegisterPage from './pages/RegisterPage/RegisterPage'
+import FavoritesPage from './pages/FavoritesPage/FavoritesPage'
+import ProfilePage from './pages/ProfilePage/ProfilePage';
 
 const PrivateRoute = ({ children, guestAllowed = false }) => {
     const token = localStorage.getItem('token');

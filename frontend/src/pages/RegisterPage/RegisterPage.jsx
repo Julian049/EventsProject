@@ -1,5 +1,5 @@
 import {useState} from 'react'
-import {register} from '../api/api'
+import {register} from '../../services'
 import {useNavigate} from 'react-router-dom'
 import styles from './RegisterPage.module.css'
 

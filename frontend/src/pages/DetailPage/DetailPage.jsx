@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { getEvent, updateEvent, disableEvent, registerInterest, unregisterInterest, getCategories, getUserFavorites } from '../api/api'
-import Modal from '../components/Modal'
-import EventForm from '../components/EventForm'
-import Spinner from '../components/Spinner'
+import { getEvent, updateEvent, disableEvent, registerInterest, unregisterInterest, getCategories, getUserFavorites } from '../../services'
+import Modal from '../../components/Modal/Modal'
+import EventForm from '../../components/EventForm/EventForm'
+import Spinner from '../../components/Spinner/Spinner'
 import styles from './DetailPage.module.css'
-import {useAuth} from "../context/AuthContext.jsx";
+import {useAuth} from '../../context/AuthContext';
 
 
 function getUserIdFromToken() {
