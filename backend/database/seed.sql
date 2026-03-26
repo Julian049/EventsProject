@@ -13,5 +13,5 @@ SELECT
     'https://picsum.photos/seed/' || i || '/800/600',
     (i % 5) + 1,
     (random() * 200000 + 10000)::numeric(10,2),
-    true
+    'Active'
 FROM generate_series(1, 1000) AS s(i);
