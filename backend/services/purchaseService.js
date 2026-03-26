@@ -41,6 +41,7 @@ exports.createPurchase = async ({userId, eventId, ticketTypeId, quantity}) => {
                 });
                 console.log("11")
                 out = await PurchaseModel.create(newPurchase);
+                EventTicketTypeModel.updateAvailableQuantity(eventId,ticketTypeId,quantity)
             }else {
                 throw new Error('No hay suficientes tickets disponibles');
             }
