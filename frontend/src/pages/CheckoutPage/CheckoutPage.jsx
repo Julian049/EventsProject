@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getEvent } from '../../services/events.service'
-import { getEventTicketTypes, createPurchase, getTicketsByPurchase } from '../../services/checkout.service'
+import { getEventTicketTypes, createPurchase } from '../../services/checkout.service'
 import Spinner from '../../components/Spinner/Spinner'
 import styles from './CheckoutPage.module.css'
 
@@ -57,15 +57,14 @@ export default function CheckoutPage() {
         setPurchasing(true)
         setError(null)
         try {
-            const newPurchase = await createPurchase(id, {
+            const response = await createPurchase(id, {
                 ticketTypeId: selectedType.ticketTypeId ?? selectedType.ticket_type_id ?? selectedType.id,
                 quantity,
             })
-            setPurchase(newPurchase)
+            setPurchase(response)
 
-            // Fetch generated tickets
-            const tkts = await getTicketsByPurchase(newPurchase.id)
-            setTickets(Array.isArray(tkts) ? tkts : [])
+            const generatedTickets = response.tickets || (Array.isArray(response) ? response : [])
+            setTickets(generatedTickets)
             setStep(2)
         } catch (err) {
             setError(err.message || 'Error al procesar la compra.')
@@ -112,7 +111,7 @@ export default function CheckoutPage() {
                         )}
                         <div className={styles.ticketGrid}>
                             {ticketTypes.map(tt => {
-                                const available = parseInt(tt.availableQuantity ?? tt.available_quantity ?? 0)
+                                const available = parseInt( tt.available_quantity ?? 0)
                                 const isSelected = selectedType?.id === tt.id
                                 const isSoldOut = available === 0
                                 return (
@@ -227,11 +226,11 @@ export default function CheckoutPage() {
                                 <p className={styles.empty}>Tickets generados. Revisa tus compras para verlos.</p>
                             )}
                             {tickets.map((t, i) => (
-                                <div key={t.id} className={styles.ticketIssued}>
+                                <div key={t.id ?? i} className={styles.ticketIssued}>
                                     <div className={styles.ticketIssuedHeader}>
                                         <span>Ticket #{i + 1}</span>
                                         <span className={`${styles.ticketStatus} ${t.status === 'Active' ? styles.statusActive : ''}`}>
-                      {t.status}
+                      {t.status || 'Active'}
                     </span>
                                     </div>
                                     {/* QR placeholder — en producción usar una librería como qrcode.react */}
