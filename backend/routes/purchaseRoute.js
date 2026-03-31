@@ -3,7 +3,6 @@ const router = express.Router();
 const purchaseController = require('../controllers/purchaseController');
 const authentication = require("../middlewares/authMiddleware");
 
-// router.post('/create', authentication.authenticateToken, purchaseController.createPurchase);
-router.post('/create/:id', purchaseController.createPurchase);
+router.post('/create/:id', authentication.authenticateToken, purchaseController.createPurchase);
 
 module.exports = router;

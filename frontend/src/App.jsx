@@ -8,6 +8,7 @@ import LoginPage     from './pages/LoginPage/LoginPage'
 import RegisterPage from './pages/RegisterPage/RegisterPage'
 import FavoritesPage from './pages/FavoritesPage/FavoritesPage'
 import ProfilePage from './pages/ProfilePage/ProfilePage';
+import CheckoutPage from './pages/CheckoutPage/CheckoutPage'
 
 const PrivateRoute = ({ children, guestAllowed = false }) => {
     const token = localStorage.getItem('token');
@@ -38,6 +39,7 @@ export default function App() {
                                 <Route path="/report"     element={<ReportPage />} />
                                 <Route path="/favorites" element={<FavoritesPage />} />
                                 <Route path="/profile" element={<ProfilePage />} />
+                                <Route path="/checkout/:id" element={<CheckoutPage />} />  {/* ← agrega esta */}
                             </Routes>
                         </main>
                     </PrivateRoute>

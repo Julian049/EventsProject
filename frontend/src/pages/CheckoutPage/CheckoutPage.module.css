@@ -1,0 +1,469 @@
+/* ── Layout ────────────────────────────────────────── */
+.page {
+    min-height: 100vh;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 5rem;
+}
+
+/* ── Header ─────────────────────────────────────────── */
+.header {
+    margin-bottom: 2rem;
+}
+
+.backBtn {
+    background: none;
+    border: none;
+    color: var(--ink-mid);
+    font-size: 0.88rem;
+    font-weight: 600;
+    padding: 0;
+    margin-bottom: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+    cursor: pointer;
+}
+
+.backBtn:hover { color: var(--ink); }
+
+.eventName {
+    font-family: var(--font-display);
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+    margin: 0;
+}
+
+/* ── Stepper ─────────────────────────────────────────── */
+.stepper {
+    display: flex;
+    align-items: center;
+    margin-bottom: 2.5rem;
+}
+
+.stepItem {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    position: relative;
+}
+
+.stepCircle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    color: var(--ink-low);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    transition: all 0.25s;
+    z-index: 1;
+}
+
+.stepLabel {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--ink-low);
+    margin-left: 8px;
+    white-space: nowrap;
+    transition: color 0.25s;
+}
+
+.stepLine {
+    flex: 1;
+    height: 2px;
+    background: var(--border);
+    margin: 0 10px;
+    transition: background 0.25s;
+}
+
+.stepActive .stepCircle {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: white;
+}
+
+.stepActive .stepLabel {
+    color: var(--ink);
+}
+
+.stepDone .stepCircle {
+    background: #166534;
+    border-color: #166534;
+    color: white;
+}
+
+.stepDone .stepLabel {
+    color: #166534;
+}
+
+/* ── Content Card ───────────────────────────────────── */
+.content {
+    background: var(--card);
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    animation: fadeUp 0.35s ease both;
+}
+
+.section {
+    padding: 2rem 2rem 2.25rem;
+}
+
+.sectionTitle {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.03em;
+    margin: 0 0 1.5rem;
+}
+
+/* ── Ticket Type Cards ───────────────────────────────── */
+.ticketGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.ticketCard {
+    width: 100%;
+    text-align: left;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.ticketCard:hover:not(:disabled) {
+    border-color: var(--ink);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+.ticketCardSelected {
+    border-color: var(--ink) !important;
+    background: var(--card);
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.06);
+}
+
+.ticketCardSoldOut {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.ticketCardTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.4rem;
+}
+
+.ticketName {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--ink);
+}
+
+.badgeAvail {
+    font-size: 0.72rem;
+    font-weight: 600;
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+    padding: 2px 10px;
+    border-radius: 99px;
+}
+
+.badgeSoldOut {
+    font-size: 0.72rem;
+    font-weight: 600;
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+    padding: 2px 10px;
+    border-radius: 99px;
+}
+
+.ticketPrice {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.03em;
+}
+
+/* ── Quantity ────────────────────────────────────────── */
+.quantityRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 0.75rem 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.quantityLabel {
+    font-weight: 600;
+    color: var(--ink-mid);
+    font-size: 0.9rem;
+}
+
+.quantityControl {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.quantityControl button {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: var(--card);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.quantityControl button:hover { background: var(--ink); color: white; border-color: var(--ink); }
+
+.quantityControl span {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--ink);
+    min-width: 24px;
+    text-align: center;
+}
+
+/* ── Confirm Card ────────────────────────────────────── */
+.confirmCard {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+}
+
+.confirmRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.85rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+}
+
+.confirmRow:last-child { border-bottom: none; }
+
+.confirmRow span { color: var(--ink-mid); }
+.confirmRow strong { color: var(--ink); }
+
+.confirmTotal {
+    background: var(--card);
+    font-size: 1rem;
+}
+
+.confirmTotal span { font-weight: 700; color: var(--ink); }
+.confirmTotal strong { font-size: 1.2rem; letter-spacing: -0.02em; }
+
+/* ── Footer Row ─────────────────────────────────────── */
+.footerRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.totalPreview {
+    font-size: 0.9rem;
+    color: var(--ink-mid);
+}
+
+.totalPreview strong {
+    color: var(--ink);
+    font-size: 1.1rem;
+}
+
+/* ── Buttons ─────────────────────────────────────────── */
+.btnPrimary {
+    padding: 0.65rem 1.5rem;
+    background: var(--ink);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+}
+
+.btnPrimary:hover:not(:disabled) { opacity: 0.85; }
+.btnPrimary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btnSecondary {
+    padding: 0.65rem 1.25rem;
+    background: transparent;
+    color: var(--ink-mid);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.btnSecondary:hover { background: var(--surface); color: var(--ink); }
+
+/* ── Success ─────────────────────────────────────────── */
+.successHeader {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.successIcon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: #dcfce7;
+    color: #166534;
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+}
+
+.successSub {
+    color: var(--ink-mid);
+    font-size: 0.9rem;
+    margin: 0.25rem 0 0;
+}
+
+/* ── Issued Tickets ─────────────────────────────────── */
+.ticketsIssued {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.ticketIssued {
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.ticketIssuedHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink-mid);
+}
+
+.ticketStatus {
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 99px;
+    background: var(--border);
+    color: var(--ink-low);
+}
+
+.statusActive {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.qrBox {
+    padding: 1.5rem;
+    display: flex;
+    justify-content: center;
+}
+
+.qrPlaceholder {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.qrIcon {
+    font-size: 3.5rem;
+    line-height: 1;
+    color: var(--ink);
+    opacity: 0.15;
+}
+
+.qrCode {
+    font-family: monospace;
+    font-size: 0.78rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: 8px;
+    color: var(--ink-mid);
+    word-break: break-all;
+    max-width: 280px;
+    text-align: center;
+}
+
+/* ── Misc ────────────────────────────────────────────── */
+.empty {
+    color: var(--ink-low);
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.error {
+    color: #991b1b;
+    background: #fee2e2;
+    border: 1px solid #fecaca;
+    border-radius: 10px;
+    padding: 0.65rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 520px) {
+    .section { padding: 1.5rem 1.25rem; }
+    .eventName { font-size: 1.35rem; }
+    .stepLabel { display: none; }
+    .stepper { gap: 0; }
+}
