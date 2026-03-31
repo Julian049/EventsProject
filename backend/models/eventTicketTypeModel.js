@@ -12,7 +12,7 @@ const getByIds = (eventId, ticketTypeId) =>
     WHERE event_id = $(eventId)
       AND ticket_type_id = $(ticketTypeId);
   `, { eventId, ticketTypeId });
-const getTicketTypesByEventId = (eventId) => db.any('SELECT * FROM event_ticket_types WHERE event_id = $(eventId);', {eventId});
+const getTicketTypesByEventId = (eventId) => db.any('SELECT * FROM event_ticket_types et, ticket_types tt WHERE event_id = $(eventId) AND et.ticket_type_id = tt.id;', {eventId});
 const create = (eventTicketType) => db.one(`
     INSERT INTO event_ticket_types (event_id, price, total_quantity, available_quantity, ticket_type_id)
     VALUES ($(eventId), $(price), $(totalQuantity), $(availableQuantity), $(ticketTypeId))

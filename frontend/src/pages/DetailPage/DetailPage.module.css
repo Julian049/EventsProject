@@ -133,6 +133,23 @@
   cursor: default;
 }
 
+.btnBuy {
+  background: var(--ink);
+  color: white;
+  padding: 0.6rem 1.3rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btnBuy:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
 .notFound {
   text-align: center;
   padding: 4rem;

@@ -90,99 +90,107 @@ export default function DetailPage() {
     }
   }
 
- async function handleInterest() {
-  try {
-    if (interested) {
-      const res = await unregisterInterest(id)
-      console.log('unregister status:', res.status)
-    } else {
-      const res = await registerInterest(id)
-      console.log('register status:', res.status)
+  async function handleInterest() {
+    try {
+      if (interested) {
+        const res = await unregisterInterest(id)
+        console.log('unregister status:', res.status)
+      } else {
+        const res = await registerInterest(id)
+        console.log('register status:', res.status)
+      }
+      setInterested(prev => !prev)
+    } catch (err) {
+      console.error('Error completo:', err)
+      alert('Error al actualizar el interés.')
     }
-    setInterested(prev => !prev)
-  } catch (err) {
-    console.error('Error completo:', err)
-    alert('Error al actualizar el interés.')
   }
-}
 
   if (loading) return <Spinner />
 
   if (!event) return (
-    <div className={styles.notFound}>
-      <p>Evento no encontrado.</p>
-      <button className={styles.btnBack} onClick={() => navigate('/')}>← Volver</button>
-    </div>
+      <div className={styles.notFound}>
+        <p>Evento no encontrado.</p>
+        <button className={styles.btnBack} onClick={() => navigate('/')}>← Volver</button>
+      </div>
   )
 
   return (
-    <div className={styles.page}>
-      <button className={styles.backLink} onClick={() => navigate(-1)}>← Volver</button>
+      <div className={styles.page}>
+        <button className={styles.backLink} onClick={() => navigate(-1)}>← Volver</button>
 
-      <div className={styles.card}>
-        <div className={styles.imgWrap}>
-          <img
-            src={event.image || ''}
-            alt={event.name}
-            onError={e => { e.target.src = 'https://placehold.co/900x380/e2e8f0/94a3b8?text=Sin+imagen' }}
-          />
-        </div>
+        <div className={styles.card}>
+          <div className={styles.imgWrap}>
+            <img
+                src={event.image || ''}
+                alt={event.name}
+                onError={e => { e.target.src = 'https://placehold.co/900x380/e2e8f0/94a3b8?text=Sin+imagen' }}
+            />
+          </div>
 
-        <div className={styles.info}>
-          <h1 className={styles.title}>{event.name}</h1>
+          <div className={styles.info}>
+            <h1 className={styles.title}>{event.name}</h1>
 
-          <div className={styles.meta}>
-            {event.date && (
-              <span className={styles.badge}>
+            <div className={styles.meta}>
+              {event.date && (
+                  <span className={styles.badge}>
                 📅 {new Date(event.date).toLocaleDateString('es-ES', { dateStyle: 'long' })}
               </span>
-            )}
-            {event.category && (
-              <span className={styles.badge}>🏷️ {event.category}</span>
-            )}
-            {event.price && (
-              <span className={`${styles.badge} ${styles.priceBadge}`}>
+              )}
+              {event.category && (
+                  <span className={styles.badge}>🏷️ {event.category}</span>
+              )}
+              {event.price && (
+                  <span className={`${styles.badge} ${styles.priceBadge}`}>
                 💲{event.price}
               </span>
-            )}
-          </div>
+              )}
+            </div>
 
-          <p className={styles.desc}>{event.description || 'Sin descripción.'}</p>
+            <p className={styles.desc}>{event.description || 'Sin descripción.'}</p>
 
-          <div className={styles.actions}>
-            {role === 'Admin' && (
-                <button className={styles.btnEdit} onClick={() => setModalOpen(true)}>
-                  ✏ Editar
-                </button>
-            )}
-            {role === 'Admin' && (
-                <button className={styles.btnDisable} onClick={handleDisable}>
-                  Deshabilitar
-                </button>
-            )}
-            {(role === 'Member') && (
-                <button
-                    className={`${styles.btnInterest} ${interested ? styles.btnInterestDone : ''}`}
-                    onClick={handleInterest}
-                >
-                  {interested ? '⭐ ¡Guardado!' : '☆ Me interesa'}
-                </button>
-            )}
+            <div className={styles.actions}>
+              {role === 'Admin' && (
+                  <button className={styles.btnEdit} onClick={() => setModalOpen(true)}>
+                    ✏ Editar
+                  </button>
+              )}
+              {role === 'Admin' && (
+                  <button className={styles.btnDisable} onClick={handleDisable}>
+                    Deshabilitar
+                  </button>
+              )}
+              {(role === 'Member') && (
+                  <button
+                      className={`${styles.btnInterest} ${interested ? styles.btnInterestDone : ''}`}
+                      onClick={handleInterest}
+                  >
+                    {interested ? '⭐ ¡Guardado!' : '☆ Me interesa'}
+                  </button>
+              )}
+              {(role === 'Member') && (
+                  <button
+                      className={styles.btnBuy}
+                      onClick={() => navigate(`/checkout/${id}`)}
+                  >
+                    🎟 Comprar entradas
+                  </button>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Editar Evento">
-        <EventForm
-          form={form}
-          setForm={setForm}
-          categories={categories}
-          onSubmit={handleSave}
-          onCancel={() => setModalOpen(false)}
-          saving={saving}
-          submitLabel="Guardar"
-        />
-      </Modal>
-    </div>
+        <Modal open={modalOpen} onClose={() => setModalOpen(false)} title="Editar Evento">
+          <EventForm
+              form={form}
+              setForm={setForm}
+              categories={categories}
+              onSubmit={handleSave}
+              onCancel={() => setModalOpen(false)}
+              saving={saving}
+              submitLabel="Guardar"
+          />
+        </Modal>
+      </div>
   )
 }
