@@ -1,16 +1,10 @@
 const purchaseService = require('../services/purchaseService');
 
 exports.createPurchase = async (req, res) => {
-    console.log("create Purchase");
     try {
-        console.log("1")
         const eventId = parseInt(req.params.id);
-        console.log("2")
         const {ticketTypeId, quantity} = req.body;
-        console.log("3")
         const userId = req.user?.id;
-
-        console.log("4")
         const newPurchase = await purchaseService.createPurchase({userId, eventId, ticketTypeId, quantity});
         res.status(201).json(newPurchase);
 

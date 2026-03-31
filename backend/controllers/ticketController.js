@@ -2,7 +2,6 @@ const ticketService = require('../services/ticketService');
 
 exports.createTicket = async (req, res) => {
     try {
-        console.log(req.body);
         const newTicket = await ticketService.createTicket(req.body);
         res.json(newTicket);
     } catch (err) {
