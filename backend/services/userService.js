@@ -29,3 +29,7 @@ exports.updateUser = (user, id) => {
 exports.getUserById = (id) => {
     return UserModel.getById(id);
 }
+
+exports.deleteUser = (id) => {
+    return UserModel.remove(id);s
+}

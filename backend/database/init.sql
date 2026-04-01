@@ -12,7 +12,8 @@ CREATE TABLE IF NOT EXISTS users
     name     VARCHAR(150)        NOT NULL CHECK (TRIM(name) <> ''),
     email    VARCHAR(255) UNIQUE NOT NULL CHECK (TRIM(email) <> ''),
     password TEXT                NOT NULL,
-    role     VARCHAR(20)         NOT NULL DEFAULT 'Member' CHECK (role IN ('Admin', 'Member'))
+    role     VARCHAR(20)         NOT NULL DEFAULT 'Member' CHECK (role IN ('Admin', 'Member')),
+    status  BOOLEAN DEFAULT true
 );
 
 CREATE TABLE IF NOT EXISTS events
