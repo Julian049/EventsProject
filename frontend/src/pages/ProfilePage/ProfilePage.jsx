@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { updateUser } from '../../services'
-import FormField from '../../components/FormField/FormField'
+import { updateUser, deleteUser } from '../../services'
 import styles from '../LoginPage/LoginPage.module.css'
 
 function getDataFromToken() {
@@ -21,6 +20,8 @@ export default function ProfilePage() {
   const [error, setError]   = useState('')
   const [success, setSuccess] = useState(false)
   const [showPass, setShowPass] = useState(false)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -53,7 +54,21 @@ export default function ProfilePage() {
     }
   }
 
-  return (
+  async function handleDelete() {
+    setDeleting(true)
+    try {
+      await deleteUser(id)
+      localStorage.removeItem('token')
+      sessionStorage.removeItem('guest')
+      navigate('/login', { replace: true })
+    } catch {
+      setConfirmDelete(false)
+      setError('Error al eliminar la cuenta.')
+    } finally {
+      setDeleting(false)
+    }
+  }
+return (
     <div className={styles.formSide} style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div className={styles.card}>
         <div className={styles.cardHeader}>
@@ -125,7 +140,93 @@ export default function ProfilePage() {
             Cancelar
           </button>
         </form>
+
+        <div style={{ marginTop: '1.5rem', paddingTop: '1.5rem', borderTop: '1.5px solid var(--border)' }}>
+          <button
+            type="button"
+            onClick={() => setConfirmDelete(true)}
+            style={{
+              width: '100%',
+              padding: '0.75rem 1.5rem',
+              background: 'transparent',
+              color: '#991b1b',
+              border: '1.5px solid #fca5a5',
+              borderRadius: '10px',
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.95rem',
+              fontWeight: 600,
+              transition: 'background 0.2s, border-color 0.2s',
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = '#fee2e2'}
+            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+          >
+            Eliminar cuenta
+          </button>
+        </div>
       </div>
+
+      {confirmDelete && (
+        <div style={{
+          position: 'fixed', inset: 0,
+          background: 'rgba(15,23,42,0.45)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 1000,
+        }}>
+          <div style={{
+            background: 'var(--card)',
+            borderRadius: '20px',
+            boxShadow: 'var(--shadow-lg)',
+            padding: '2rem 2.25rem',
+            width: '100%',
+            maxWidth: '380px',
+            animation: 'fadeUp 0.3s ease both',
+          }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem', fontWeight: 800, color: 'var(--ink)', marginBottom: '0.5rem' }}>
+              ¿Eliminar cuenta?
+            </h2>
+            <p style={{ fontSize: '0.9rem', color: 'var(--ink-mid)', lineHeight: 1.6, marginBottom: '1.75rem' }}>
+              Esta acción es irreversible. Tu cuenta y todos tus datos serán eliminados permanentemente.
+            </p>
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+              <button
+                type="button"
+                onClick={() => setConfirmDelete(false)}
+                disabled={deleting}
+                style={{
+                  padding: '0.6rem 1.2rem',
+                  border: '1.5px solid var(--border)',
+                  borderRadius: '10px',
+                  background: 'white',
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                  fontFamily: 'var(--font-body)',
+                }}
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                disabled={deleting}
+                style={{
+                  padding: '0.6rem 1.4rem',
+                  background: '#ef4444',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '10px',
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                  fontFamily: 'var(--font-body)',
+                  opacity: deleting ? 0.6 : 1,
+                  cursor: deleting ? 'not-allowed' : 'pointer',
+                }}
+              >
+                {deleting ? 'Eliminando...' : 'Sí, eliminar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

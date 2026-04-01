@@ -6,6 +6,8 @@ export const login = (body) =>
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
     }).then(async r => {
-        if (!r.ok) throw new Error('Credenciales incorrectas')
-        return r.json()
+        const text = await r.text()
+        const data = text ? JSON.parse(text) : {}
+        if (!r.ok || !data.token) throw new Error('Usuario o contraseña incorrectos')
+        return data
     })
