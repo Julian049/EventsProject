@@ -31,3 +31,10 @@ export function updateUserAuthorized(req, res, next) {
     }
     next();
 }
+
+export function deleteUserAuthorized(req, res, next) {
+    if (Number(req.params.id) !== Number(req.user.id)) {
+        return res.status(403).json({message: 'Acceso denegado'});
+    }
+    next();
+}

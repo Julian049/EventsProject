@@ -30,3 +30,13 @@ exports.getUserById = async (req, res) => {
         res.status(500).json({error: err.message});
     }
 }
+
+exports.deleteUser = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const deleted = await userService.deleteUser(id);
+        res.json(deleted);
+    } catch (err) {
+        res.status(500).json({error: err.message});
+    }
+}
