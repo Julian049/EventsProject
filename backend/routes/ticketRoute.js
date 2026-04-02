@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const ticketController = require('../controllers/ticketController');
-const authentication = require("../middlewares/authMiddleware");
 
 router.post('/create', ticketController.createTicket);
 router.get('/:id', ticketController.getById);

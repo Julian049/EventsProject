@@ -27,3 +27,16 @@ exports.createPurchase = async (req, res) => {
         res.status(500).json({error: err.message});
     }
 };
+
+exports.updatePurchase = async (req, res) => {
+    try {
+        const purchaseId = req.params.id;
+        const purchaseUpdate =await purchaseService.updatePurchase(purchaseId)
+        res.status(201).json({purchaseUpdate})
+    } catch (err) {
+        if (err.message === 'Compra no encontrada') {
+            return res.status(404).json({error: err.message});
+        }
+        res.status(500).json({error: err.message});
+    }
+}

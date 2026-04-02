@@ -13,5 +13,6 @@ const create = (purchase) => db.one(`INSERT INTO purchases (user_id, event_ticke
                                          status,
                                          created_at AS "createdAt"`, purchase)
 const getAll = () => db.any('SELECT * FROM purchases');
+const updateStatusToComplete = (id) => db.one('UPDATE purchases SET status = \'Completed\' WHERE id = $(id) RETURNING *', {id})
 
-module.exports = {getByUser, getById, getAll, create};
+module.exports = {getByUser, getById, getAll, create, updateStatusToComplete};

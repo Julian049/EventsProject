@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import { getEvent } from '../../services/events.service'
-import { getEventTicketTypes, createPurchase } from '../../services/checkout.service'
+import {useState, useEffect} from 'react'
+import {useParams, useNavigate} from 'react-router-dom'
+import {getEvent} from '../../services/events.service'
+import {getEventTicketTypes, createPurchase, updateStatus} from '../../services/checkout.service'
 import Spinner from '../../components/Spinner/Spinner'
 import styles from './CheckoutPage.module.css'
 
@@ -10,27 +10,29 @@ function getUserIdFromToken() {
     if (!token) return null
     try {
         return JSON.parse(atob(token.split('.')[1]))?.id || null
-    } catch { return null }
+    } catch {
+        return null
+    }
 }
 
 const STEPS = ['Seleccionar', 'Confirmar', 'Tu ticket']
 
 export default function CheckoutPage() {
-    const { id } = useParams()
+    const {id} = useParams()
     const navigate = useNavigate()
 
-    const [step, setStep]                 = useState(0)
-    const [event, setEvent]               = useState(null)
-    const [ticketTypes, setTicketTypes]   = useState([])
-    const [loading, setLoading]           = useState(true)
-    const [purchasing, setPurchasing]     = useState(false)
-    const [error, setError]               = useState(null)
+    const [step, setStep] = useState(0)
+    const [event, setEvent] = useState(null)
+    const [ticketTypes, setTicketTypes] = useState([])
+    const [loading, setLoading] = useState(true)
+    const [purchasing, setPurchasing] = useState(false)
+    const [error, setError] = useState(null)
 
     const [selectedType, setSelectedType] = useState(null)
-    const [quantity, setQuantity]         = useState(1)
+    const [quantity, setQuantity] = useState(1)
 
-    const [purchase, setPurchase]         = useState(null)
-    const [tickets, setTickets]           = useState([])
+    const [purchase, setPurchase] = useState(null)
+    const [tickets, setTickets] = useState([])
 
     useEffect(() => {
         async function load() {
@@ -50,6 +52,7 @@ export default function CheckoutPage() {
                 setLoading(false)
             }
         }
+
         load()
     }, [id])
 
@@ -63,17 +66,23 @@ export default function CheckoutPage() {
             })
             setPurchase(response)
 
+            setStep('processing')
+
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            await updateStatus(response[0].purchase_id);
+
             const generatedTickets = response.tickets || (Array.isArray(response) ? response : [])
             setTickets(generatedTickets)
             setStep(2)
         } catch (err) {
             setError(err.message || 'Error al procesar la compra.')
+            setStep(1)
         } finally {
             setPurchasing(false)
         }
     }
 
-    if (loading) return <Spinner />
+    if (loading) return <Spinner/>
 
     const total = selectedType ? (parseFloat(selectedType.price) * quantity).toFixed(2) : '0.00'
 
@@ -91,10 +100,11 @@ export default function CheckoutPage() {
             {/* Stepper */}
             <div className={styles.stepper}>
                 {STEPS.map((label, i) => (
-                    <div key={i} className={`${styles.stepItem} ${i === step ? styles.stepActive : ''} ${i < step ? styles.stepDone : ''}`}>
+                    <div key={i}
+                         className={`${styles.stepItem} ${i === step ? styles.stepActive : ''} ${i < step ? styles.stepDone : ''}`}>
                         <div className={styles.stepCircle}>{i < step ? '✓' : i + 1}</div>
                         <span className={styles.stepLabel}>{label}</span>
-                        {i < STEPS.length - 1 && <div className={styles.stepLine} />}
+                        {i < STEPS.length - 1 && <div className={styles.stepLine}/>}
                     </div>
                 ))}
             </div>
@@ -111,14 +121,17 @@ export default function CheckoutPage() {
                         )}
                         <div className={styles.ticketGrid}>
                             {ticketTypes.map(tt => {
-                                const available = parseInt( tt.available_quantity ?? 0)
+                                const available = parseInt(tt.available_quantity ?? 0)
                                 const isSelected = selectedType?.id === tt.id
                                 const isSoldOut = available === 0
                                 return (
                                     <button
                                         key={tt.id}
                                         disabled={isSoldOut}
-                                        onClick={() => { setSelectedType(tt); setQuantity(1) }}
+                                        onClick={() => {
+                                            setSelectedType(tt);
+                                            setQuantity(1)
+                                        }}
                                         className={`${styles.ticketCard} ${isSelected ? styles.ticketCardSelected : ''} ${isSoldOut ? styles.ticketCardSoldOut : ''}`}
                                     >
                                         <div className={styles.ticketCardTop}>
@@ -145,7 +158,8 @@ export default function CheckoutPage() {
                                     <button onClick={() => {
                                         const max = parseInt(selectedType.availableQuantity ?? selectedType.available_quantity ?? 1)
                                         setQuantity(q => Math.min(max, q + 1))
-                                    }}>+</button>
+                                    }}>+
+                                    </button>
                                 </div>
                             </div>
                         )}
@@ -212,6 +226,21 @@ export default function CheckoutPage() {
                     </div>
                 )}
 
+                {/* STEP processing — Pantalla de espera */}
+                {step === 'processing' && (
+                    <div className={styles.section} style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+                        <div className={styles.processingIcon}>⏳</div>
+                        <h2 className={styles.sectionTitle}>Procesando tu compra…</h2>
+                        <p className={styles.successSub}>Estamos confirmando tu pago, no cierres esta ventana.</p>
+
+                        <div className={styles.statusBadge}>
+                            🟡 Compra pendiente
+                        </div>
+
+                        <Spinner />
+                    </div>
+                )}
+
                 {/* STEP 2 — Tickets / QR */}
                 {step === 2 && (
                     <div className={styles.section}>
@@ -229,7 +258,8 @@ export default function CheckoutPage() {
                                 <div key={t.id ?? i} className={styles.ticketIssued}>
                                     <div className={styles.ticketIssuedHeader}>
                                         <span>Ticket #{i + 1}</span>
-                                        <span className={`${styles.ticketStatus} ${t.status === 'Active' ? styles.statusActive : ''}`}>
+                                        <span
+                                            className={`${styles.ticketStatus} ${t.status === 'Active' ? styles.statusActive : ''}`}>
                       {t.status || 'Active'}
                     </span>
                                     </div>
@@ -244,7 +274,7 @@ export default function CheckoutPage() {
                             ))}
                         </div>
 
-                        <div className={styles.footerRow} style={{ justifyContent: 'center', gap: '1rem' }}>
+                        <div className={styles.footerRow} style={{justifyContent: 'center', gap: '1rem'}}>
                             <button className={styles.btnSecondary} onClick={() => navigate('/')}>
                                 Ir al inicio
                             </button>

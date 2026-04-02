@@ -31,5 +31,5 @@ exports.getUserById = (id) => {
 }
 
 exports.deleteUser = (id) => {
-    return UserModel.remove(id);s
+    return UserModel.remove(id);
 }
