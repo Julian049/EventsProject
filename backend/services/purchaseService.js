@@ -4,6 +4,7 @@ const PurchaseModel = require('../models/purchaseModel');
 const UserModel = require('../models/userModel');
 const EventModel = require('../models/eventModel');
 const EventTicketTypeModel = require('../models/eventTicketTypeModel');
+const EventTicketTypeService = require('../services/eventTicketTypeService');
 const Role = require('../constants/role');
 
 exports.createPurchase = async ({userId, eventId, ticketTypeId, quantity}) => {
@@ -32,7 +33,7 @@ exports.createPurchase = async ({userId, eventId, ticketTypeId, quantity}) => {
                     totalAmount: quantity * price,
                 });
                 purchaseCreated = await PurchaseModel.create(newPurchase);
-                EventTicketTypeModel.updateAvailableQuantity(eventId, ticketTypeId, quantity)
+                await EventTicketTypeService.updateAvailableQuantity(eventId, ticketTypeId, quantity)
                 for (let i = 0; i < quantity; i++) {
                     const ticket = {
                         purchaseId: purchaseCreated.id,
