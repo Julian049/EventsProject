@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const eventTicketTypeController = require('../controllers/eventTicketTypeController');
-const authentication = require("../middlewares/authMiddleware");
 
 router.post('/create', eventTicketTypeController.createEventTicketType);
 router.get('/all/:eventId', eventTicketTypeController.getAllTicketTypes);
