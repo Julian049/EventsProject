@@ -10,6 +10,10 @@ exports.login = async (email, password) => {
         throw new errors.NotFoundError("Usuario no encontrado")
     }
 
+    if (user.status === false) {
+        throw new errors.NotFoundError("Usuario eliminado o desactivado")
+    }
+
     const userPassword = user.password;
 
     const validate = await bcryptUtil.validatePassword(userPassword, password);

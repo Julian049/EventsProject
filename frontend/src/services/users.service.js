@@ -21,3 +21,11 @@ export const getUsers = () =>
     fetch(`${API_BASE}/users/`, {
         headers: getHeaders(),
     }).then(r => r.json())
+
+export const deleteUser = (id) =>
+    fetch(`${API_BASE}/users/delete/${id}`, {
+        method: 'DELETE',
+        headers: getHeaders(),
+    }).then(async r => {
+        if (!r.ok) throw new Error('Error al intentar eliminar el usuario')
+    })
