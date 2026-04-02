@@ -4,5 +4,6 @@ const purchaseController = require('../controllers/purchaseController');
 const authentication = require("../middlewares/authMiddleware");
 
 router.post('/create/:id', authentication.authenticateToken, purchaseController.createPurchase);
+router.patch('/updateStatusToComplete/:id', authentication.authenticateToken, purchaseController.updatePurchase);
 
 module.exports = router;

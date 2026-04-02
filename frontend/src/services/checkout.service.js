@@ -1,4 +1,4 @@
-import { API_BASE, getHeaders } from './config'
+import {API_BASE, getHeaders} from './config'
 
 export const getEventTicketTypes = (eventId) =>
     fetch(`${API_BASE}/eventTicketType/all/${eventId}`, {
@@ -16,7 +16,8 @@ export const createPurchase = (eventId, body) =>
         return data
     })
 
-export const getTicketsByPurchase = (purchaseId) =>
-    fetch(`${API_BASE}/ticket/purchase/${purchaseId}`, {
-        headers: getHeaders(),
+export const updateStatus = (purchaseId) =>
+    fetch(`${API_BASE}/purchase/updateStatusToComplete/${purchaseId}`, {
+        method: 'PATCH',
+        headers: getHeaders()
     }).then(r => r.json())

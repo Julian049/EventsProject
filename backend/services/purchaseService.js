@@ -54,3 +54,10 @@ exports.createPurchase = async ({userId, eventId, ticketTypeId, quantity}) => {
 
     return tickets
 }
+
+exports.updatePurchase = async (id) => {
+    let purchase = await PurchaseModel.getById(id)
+    if (!purchase)
+        throw new Error('Compra no encontrada');
+    return PurchaseModel.updateStatusToComplete(id);
+}
