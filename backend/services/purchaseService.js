@@ -1,5 +1,6 @@
 const Purchase = require('../models/purchase');
 const TicketService = require('../services/ticketService');
+const TicketModel = require('../models/ticketModel');
 const PurchaseModel = require('../models/purchaseModel');
 const UserModel = require('../models/userModel');
 const EventModel = require('../models/eventModel');
@@ -22,7 +23,7 @@ exports.createPurchase = async ({ userId, eventId, ticketTypeId, quantity }) => 
     const actualQuantity = parseInt(eventTicketType.availableQuantity);
     const price = parseFloat(eventTicketType.price);
 
-    // 👉 Validaciones finales (tomadas de tu versión)
+    
     if (event.status !== 'Active')
         throw new Error('Evento no activo');
 
@@ -41,7 +42,7 @@ exports.createPurchase = async ({ userId, eventId, ticketTypeId, quantity }) => 
 
     const purchaseCreated = await PurchaseModel.create(newPurchase);
 
-    // 👉 Usamos el service correcto (tu versión)
+   
     await EventTicketTypeService.updateAvailableQuantity(eventId, ticketTypeId, quantity);
 
     for (let i = 0; i < quantity; i++) {
@@ -68,4 +69,18 @@ exports.updatePurchase = async (id) => {
         throw new Error('Compra no encontrada');
 
     return PurchaseModel.updateStatusToComplete(id);
+};
+
+exports.getMyPurchases = (userId) => {
+    return PurchaseModel.getByUser(userId);
+};
+
+exports.getMyPurchasesWithTickets = async (userId) => {
+    const purchases = await PurchaseModel.getByUser(userId);
+    const result = [];
+    for (const purchase of purchases) {
+        const tickets = await TicketModel.getTicketsByPurchase(purchase.id);
+        result.push({...purchase, tickets});
+    }
+    return result;
 };
