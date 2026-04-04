@@ -22,9 +22,16 @@ exports.getById = async (req, res) => {
 exports.getTicketsByPurchase = async (req, res) => {
     try {
         const {purchaseId} = req.params;
-        const tickets = await ticketService.getTicketsByPurchase(purchaseId);
+        const userId = req.user.id;
+        const tickets = await ticketService.getTicketsByPurchase(purchaseId, userId);
         res.json(tickets);
     } catch (err) {
+        if (err.message === 'Acceso denegado') {
+            return res.status(403).json({error: err.message});
+        }
+        if (err.message === 'La compra no existe') {
+            return res.status(404).json({error: err.message});
+        }
         res.status(500).json({error: err.message});
     }
 }
