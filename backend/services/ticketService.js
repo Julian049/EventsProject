@@ -18,12 +18,13 @@ exports.getById = async (id) => {
     return ticket;
 }
 
-exports.getTicketsByPurchase = async (purchaseId) => {
-    const purchase = PurchaseModel.getById(purchaseId);
+exports.getTicketsByPurchase = async (purchaseId, userId) => {
+    const purchase = await PurchaseModel.getById(purchaseId);
     if (!purchase) {
         throw new Error('La compra no existe');
     }
-
-    const tickets = await TicketModel.getTicketsByPurchase(purchaseId);
-    return tickets;
+    if (purchase.user_id !== userId) {
+        throw new Error('Acceso denegado');
+    }
+    return TicketModel.getTicketsByPurchase(purchaseId);
 }
