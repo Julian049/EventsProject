@@ -72,6 +72,18 @@ export default function Navbar() {
                     </NavLink>
                 )}
 
+                {token && role === 'Member' && (
+                    <NavLink
+                        to="/my-tickets"
+                        className={({isActive}) =>
+                            isActive ? `${styles.link} ${styles.active}` : styles.link
+                        }
+                    >
+                        Mis boletas
+                    </NavLink>
+                )}
+
+
                 {token
                     ? <button className={styles.btnLogin} onClick={handleLogout}>Cerrar sesión</button>
                     : <button className={styles.btnLogin} onClick={() => navigate('/login')}>Iniciar sesión</button>

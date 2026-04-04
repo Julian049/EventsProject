@@ -21,3 +21,10 @@ export const updateStatus = (purchaseId) =>
         method: 'PATCH',
         headers: getHeaders()
     }).then(r => r.json())
+
+export const getMyPurchases = () =>
+    fetch(`${API_BASE}/purchase/my-purchases`, {
+        headers: getHeaders(),
+    }).then(r => r.json())
+
+    
