@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Navbar        from './components/Navbar/Navbar'
+import MyTicketsPage from './pages/MyTicketsPage/MyTicketsPage'
 import EventsPage    from './pages/EventsPage/EventsPage'
 import CategoriesPage from './pages/CategoriesPage/CategoriesPage'
 import DetailPage    from './pages/DetailPage/DetailPage'
@@ -38,6 +39,7 @@ export default function App() {
                                 <Route path="/event/:id"  element={<DetailPage />} />
                                 <Route path="/report"     element={<ReportPage />} />
                                 <Route path="/favorites" element={<FavoritesPage />} />
+                                <Route path="/my-tickets" element={<MyTicketsPage />} />
                                 <Route path="/profile" element={<ProfilePage />} />
                                 <Route path="/checkout/:id" element={<CheckoutPage />} />  {/* ← agrega esta */}
                             </Routes>
