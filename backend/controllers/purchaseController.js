@@ -40,3 +40,14 @@ exports.updatePurchase = async (req, res) => {
         res.status(500).json({error: err.message});
     }
 }
+
+exports.getMyPurchases = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const purchases = await purchaseService.getMyPurchasesWithTickets(userId);
+        res.status(200).json(purchases);
+    } catch (err) {
+        res.status(500).json({error: err.message});
+    }
+}
+
