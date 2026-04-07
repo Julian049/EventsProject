@@ -1,9 +1,8 @@
 import {API_BASE, getHeaders} from './config'
 
 export const getEventTicketTypes = (eventId) =>
-    fetch(`${API_BASE}/eventTicketType/all/${eventId}`, {
-        headers: getHeaders(),
-    }).then(r => r.json())
+    fetch(`${API_BASE}/eventTicketType/all/${eventId}`).then(r => r.json())
+
 
 export const createPurchase = (eventId, body) =>
     fetch(`${API_BASE}/purchase/create/${eventId}`, {
@@ -27,4 +26,13 @@ export const getMyPurchases = () =>
         headers: getHeaders(),
     }).then(r => r.json())
 
-    
+
+export const createEventTicketType = (body) =>
+    fetch(`${API_BASE}/eventTicketType/create`, {
+        method: 'POST',
+        headers: getHeaders(),
+        body: JSON.stringify(body),
+    }).then(async r => {
+        if (!r.ok) throw new Error('Error al asignar el tipo de boleta')
+        return r.json()
+    })
