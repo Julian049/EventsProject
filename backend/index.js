@@ -22,6 +22,7 @@ app.use('/purchase', require("./routes/purchaseRoute"));
 app.use('/ticketType', require("./routes/ticketTypeRoute"));
 app.use('/eventTicketType', require("./routes/eventTicketTypeRoute"));
 app.use('/ticket', require('./routes/ticketRoute'));
+app.use('/dashboard', require('./routes/dashboardRoute'));
 
 require('./cron/eventCron');
 
