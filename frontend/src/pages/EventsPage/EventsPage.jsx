@@ -65,6 +65,10 @@ export default function EventsPage() {
 
   useEffect(() => {
     load(page);
+
+    const handleFocus = () => load(page);
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
   }, [page]);
 
   function openModal() {
@@ -122,7 +126,7 @@ export default function EventsPage() {
 
     try {
       const [ett, all] = await Promise.all([
-        getEventTicketTypes(ev.id).catch(() => []), // ← si falla, array vacío
+        getEventTicketTypes(ev.id).catch(() => []),
         getTicketTypes().catch(() => []),
       ]);
 
@@ -213,10 +217,12 @@ export default function EventsPage() {
                   {role === "Admin" && (
                     <span
                       className={
-                        ev.status ? styles.badgeActive : styles.badgeInactive
+                        ev.status === "Active"
+                          ? styles.badgeActive
+                          : styles.badgeInactive
                       }
                     >
-                      {ev.status ? "Activo" : "Inactivo"}
+                      {ev.status === "Active" ? "Activo" : "Inactivo"}
                     </span>
                   )}
                 </div>
