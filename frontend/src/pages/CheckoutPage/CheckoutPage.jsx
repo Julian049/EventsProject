@@ -228,7 +228,7 @@ export default function CheckoutPage() {
 
                 {/* STEP processing — Pantalla de espera */}
                 {step === 'processing' && (
-                    <div className={styles.section} style={{ textAlign: 'center', padding: '3rem 1rem' }}>
+                    <div className={styles.section} style={{textAlign: 'center', padding: '3rem 1rem'}}>
                         <div className={styles.processingIcon}>⏳</div>
                         <h2 className={styles.sectionTitle}>Procesando tu compra…</h2>
                         <p className={styles.successSub}>Estamos confirmando tu pago, no cierres esta ventana.</p>
@@ -237,7 +237,7 @@ export default function CheckoutPage() {
                             🟡 Compra pendiente
                         </div>
 
-                        <Spinner />
+                        <Spinner/>
                     </div>
                 )}
 
@@ -258,17 +258,21 @@ export default function CheckoutPage() {
                                 <div key={t.id ?? i} className={styles.ticketIssued}>
                                     <div className={styles.ticketIssuedHeader}>
                                         <span>Ticket #{i + 1}</span>
-                                        <span
-                                            className={`${styles.ticketStatus} ${t.status === 'Active' ? styles.statusActive : ''}`}>
-                      {t.status || 'Active'}
-                    </span>
+                                        <span className={`${styles.ticketStatus} ${t.status === 'Active' ? styles.statusActive : ''}`}>
+                                            {t.status || 'Active'}
+                                        </span>
                                     </div>
-                                    {/* QR placeholder — en producción usar una librería como qrcode.react */}
-                                    <div className={styles.qrBox}>
-                                        <div className={styles.qrPlaceholder}>
-                                            <div className={styles.qrIcon}>▦</div>
-                                            <code className={styles.qrCode}>{t.qrCode ?? t.qr_code}</code>
-                                        </div>
+
+                                    <div style={{
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        alignItems: 'center'
+                                    }} className={styles.qrContainer}>
+                                        <img
+                                            src={t.qr_code}
+                                            alt={`QR Ticket ${i + 1}`}
+                                            className={styles.qrImage}
+                                        />
                                     </div>
                                 </div>
                             ))}
