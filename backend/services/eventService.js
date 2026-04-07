@@ -18,8 +18,14 @@ exports.viewAllEvents = async (page) => {
     return EventModel.getAll(limit, offset);
 }
 
-exports.updateEvent = (newEvent,id) => {
-    return EventModel.update(newEvent,id);
+exports.updateEvent = async (newEvent, id) => {
+    const current = await EventModel.getById(id);
+    const eventToUpdate = {
+        ...current,
+        ...newEvent,
+        status: newEvent.status || current.status 
+    };
+    return EventModel.update(eventToUpdate, id);
 }
 
 exports.disableEvent = (id) => {

@@ -229,6 +229,7 @@ export default function EventsPage() {
                 {role === "Admin" && (
                   <button
                     className={styles.btnTicket}
+                    disabled={ev.status !== "Active"}
                     onClick={(e) => {
                       e.stopPropagation();
                       openTicketModal(ev);
