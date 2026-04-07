@@ -23,4 +23,6 @@ app.use('/ticketType', require("./routes/ticketTypeRoute"));
 app.use('/eventTicketType', require("./routes/eventTicketTypeRoute"));
 app.use('/ticket', require('./routes/ticketRoute'));
 
+require('./cron/eventCron');
+
 app.listen(port, () => console.log("Server running on port " + port));
