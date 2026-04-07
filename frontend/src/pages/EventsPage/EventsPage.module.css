@@ -273,3 +273,8 @@
   padding-top: 0.25rem;
   border-top: 1.5px solid var(--border);
 }
+
+.btnTicket:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
