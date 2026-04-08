@@ -5,6 +5,7 @@ import {
   getFavoritesReport,
   getUsers,
   getDashboardMetrics,
+  getSalesByEvent,
 } from "../../services";
 import Spinner from "../../components/Spinner/Spinner";
 import styles from "./ReportPage.module.css";
@@ -12,6 +13,7 @@ import styles from "./ReportPage.module.css";
 const TOP = 10;
 const TABS = [
   { key: "dashboard", label: "📊 Dashboard" },
+  { key: "sales", label: "💸 Ventas" },
   { key: "clicks", label: "🖱 Clicks" },
   { key: "favorites", label: "⭐ Favoritos" },
   { key: "users", label: "👥 Usuarios" },
@@ -26,18 +28,23 @@ export default function ReportPage() {
   const [showAllClicks, setShowAllClicks] = useState(false);
   const [showAllFavs, setShowAllFavs] = useState(false);
   const [metrics, setMetrics] = useState(null);
+  const [salesRows, setSalesRows] = useState([]);
+  const [salesFilter, setSalesFilter] = useState("");
 
   useEffect(() => {
     async function load() {
       try {
-        const [interests, favorites, users, metricsData] = await Promise.all([
-          getAllInterested(),
-          getFavoritesReport(),
-          getUsers(),
-          getDashboardMetrics(),
-        ]);
+        const [interests, favorites, users, metricsData, sales] =
+          await Promise.all([
+            getAllInterested(),
+            getFavoritesReport(),
+            getUsers(),
+            getDashboardMetrics(),
+            getSalesByEvent(),
+          ]);
 
         setMetrics(metricsData);
+        setSalesRows(Array.isArray(sales) ? sales : []);
 
         // Clicks
         const countMap = {};
@@ -287,6 +294,118 @@ export default function ReportPage() {
                   })}
                 </div>
               </div>
+            </>
+          )}
+          {activeTab === "sales" && (
+            <>
+              <h1 className={styles.heading}>Ventas por evento</h1>
+              <p className={styles.sub}>
+                Desglose de boletas vendidas e ingresos por tipo de boleta
+              </p>
+
+              <div className={styles.filterRow}>
+                <input
+                  className={styles.filterInput}
+                  type="text"
+                  placeholder="Filtrar por nombre de evento..."
+                  value={salesFilter}
+                  onChange={(e) => setSalesFilter(e.target.value)}
+                />
+                {salesFilter && (
+                  <button
+                    className={styles.filterClear}
+                    onClick={() => setSalesFilter("")}
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+
+              {(() => {
+                const filtered = salesRows.filter((r) =>
+                  r.eventName.toLowerCase().includes(salesFilter.toLowerCase()),
+                );
+
+                if (filtered.length === 0)
+                  return <p className={styles.empty}>No hay resultados.</p>;
+
+                // Agrupar por evento
+                const grouped = filtered.reduce((acc, row) => {
+                  if (!acc[row.eventId])
+                    acc[row.eventId] = {
+                      name: row.eventName,
+                      date: row.eventDate,
+                      rows: [],
+                    };
+                  acc[row.eventId].rows.push(row);
+                  return acc;
+                }, {});
+
+                return Object.values(grouped).map((group) => {
+                  const groupTotal = group.rows.reduce(
+                    (sum, r) => sum + Number(r.totalRevenue),
+                    0,
+                  );
+                  const groupTickets = group.rows.reduce(
+                    (sum, r) => sum + Number(r.ticketsSold),
+                    0,
+                  );
+                  return (
+                    <div key={group.name} className={styles.salesGroup}>
+                      <div className={styles.salesGroupHeader}>
+                        <div>
+                          <span className={styles.salesEventName}>
+                            {group.name}
+                          </span>
+                          <span className={styles.salesEventDate}>
+                            📅{" "}
+                            {new Date(group.date).toLocaleDateString("es-ES")}
+                          </span>
+                        </div>
+                        <div className={styles.salesGroupSummary}>
+                          <span>{groupTickets} boletas</span>
+                          <span className={styles.salesGroupRevenue}>
+                            $
+                            {groupTotal.toLocaleString("es-CO", {
+                              minimumFractionDigits: 0,
+                            })}
+                          </span>
+                        </div>
+                      </div>
+                      <div className={styles.tableWrap}>
+                        <table className={styles.table}>
+                          <thead>
+                            <tr>
+                              <th>Tipo de boleta</th>
+                              <th>Boletas vendidas</th>
+                              <th>Ingresos</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {group.rows.map((row, i) => (
+                              <tr key={i} className={styles.row}>
+                                <td className={styles.name}>
+                                  {row.ticketType}
+                                </td>
+                                <td className={styles.rank}>
+                                  {row.ticketsSold}
+                                </td>
+                                <td className={styles.count}>
+                                  $
+                                  {Number(row.totalRevenue).toLocaleString(
+                                    "es-CO",
+                                    { minimumFractionDigits: 0 },
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  );
+                });
+              })()}
             </>
           )}
           {activeTab === "clicks" && (

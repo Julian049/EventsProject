@@ -293,3 +293,84 @@
   min-width: 30px;
   text-align: right;
 }
+
+.filterRow {
+  position: relative;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.filterInput {
+  width: 100%;
+  padding: 0.65rem 2.5rem 0.65rem 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--ink);
+  background: var(--card);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.filterInput:focus {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 3px rgba(15,23,42,0.08);
+}
+
+.filterClear {
+  position: absolute;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  font-size: 0.85rem;
+  color: var(--ink-low);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.filterClear:hover { color: var(--ink); }
+
+.salesGroup {
+  margin-bottom: 1.75rem;
+}
+
+.salesGroupHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.6rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.salesEventName {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  display: block;
+}
+
+.salesEventDate {
+  font-size: 0.78rem;
+  color: var(--ink-low);
+  font-weight: 500;
+}
+
+.salesGroupSummary {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-mid);
+}
+
+.salesGroupRevenue {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--ink);
+}
