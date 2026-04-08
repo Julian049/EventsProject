@@ -1,160 +1,198 @@
-# EventsProject — Backend
+# EventsProject — Sistema de Gestión de Eventos
 
-Sistema de gestión de eventos masivos desarrollado en Node.js con Express y PostgreSQL. Permite administrar eventos, categorías, usuarios y el registro de intereses y favoritos.
+Sistema de gestión de eventos. Permite administrar eventos, categorías, tipos de tickets y usuarios, además de gestionar el proceso completo de compra de tickets y visualización de reportes.
+
+El proyecto está dividido en dos partes principales:
+
+- **Backend:** API REST desarrollada en Node.js con Express y PostgreSQL.
+- **Frontend:** Single Page Application desarrollada en React con Vite.
 
 ---
 
 ## Requisitos previos
 
 - [Node.js](https://nodejs.org/) v18 o superior
-- [Docker](https://www.docker.com/) y Docker Compose
-- [Thunder Client](https://www.thunderclient.com/) u otro cliente HTTP para pruebas
+- [Docker](https://www.docker.com/) y Docker Compose (para la base de datos)
+- PGAdmin u otro cliente PostgreSQL (opcional)
 
 ---
 
-## Variables de entorno
+## Backend
 
-Crea un archivo `.env` dentro de la carpeta `backend/` con las siguientes variables:
+### Variables de entorno
+
+Crea un archivo `.env` dentro de `backend/` con las siguientes variables:
 
 ```env
-POSTGRES_USER
-POSTGRES_PASSWORD
-POSTGRES_DB
-DB_PORT
-DB_HOSTs
+POSTGRES_USER=tu_usuario
+POSTGRES_PASSWORD=tu_password
+POSTGRES_DB=eventtestdb
+DB_PORT=5432
+DB_HOST=localhost
+JWT_SECRET=tu_secreto_para_tokens
+PORT=3250
 ```
 
----
-
-## Instalación y configuración
-
-### 1. Clonar el repositorio
-
-```bash
-git clone <url-del-repositorio>
-cd EventsProject
-```
-
-### 2. Instalar dependencias
+### Ejecutar el backend
 
 ```bash
 cd backend
 npm install
-```
-
-### 3. Levantar la base de datos
-
-Desde la raíz del proyecto (`EventsProject/`):
-
-```bash
-docker compose up -d
-```
-
-Esto crea el contenedor de PostgreSQL, ejecuta `01_init.sql` (tablas) y `02_seed.sql` (datos de prueba) automáticamente.
-
-Para verificar que las tablas se crearon correctamente:
-
-```bash
-docker exec -it eventdb psql -U uptcsftw -d eventtestdb -c "\dt"
-```
-
-### 4. Iniciar el servidor
-
-```bash
-cd backend
 npm start
 ```
 
-El servidor queda disponible en `http://localhost:3250`.
+El servidor quedará disponible en `http://localhost:3250`.
+
+---
+
+## Frontend
+
+### Ejecutar el frontend
+
+Abre una nueva terminal y desde la raíz del proyecto:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Vite levantará la interfaz, típicamente en `http://localhost:5173`.
 
 ---
 
 ## Endpoints de la API
 
-### Autenticación — `/auth`
+> La mayoría de las rutas protegidas requieren el header `Authorization: Bearer <token>`.
+
+### Autenticación y usuarios (`/auth`, `/users`)
 
 | Método | Ruta | Descripción |
 |--------|------|-------------|
-| POST | `/auth/login` | Inicia sesión y devuelve un token JWT |
+| `POST` | `/auth/login` | Iniciar sesión (email y password) |
+| `POST` | `/users/create` | Registrar un nuevo usuario |
+| `GET` | `/users/` | Listar todos los usuarios |
 
-**Body:**
-```json
-{
-  "email": "admin@eventos.com",
-  "password": "123456"
-}
+### Eventos (`/event`)
+
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| `GET` | `/event?page=1` | Listar eventos (paginado) |
+| `GET` | `/event/:id` | Detalle de un evento |
+| `POST` | `/event/create` | Crear un evento (requiere permisos) |
+| `PATCH` | `/event/interested/:id` | Registrar interés en un evento |
+| `POST` | `/event/:id/favorite` | Marcar evento como favorito |
+| `DELETE` | `/event/:id/favorite` | Desmarcar evento de favoritos |
+| `GET` | `/event/favorites/user/:userId` | Listar eventos favoritos del usuario |
+
+### Categorías (`/category`)
+
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| `GET` | `/category/` | Listar todas las categorías |
+| `POST` | `/category/create` | Crear una nueva categoría |
+
+### Tipos de tickets (`/ticketType`, `/eventTicketType`)
+
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| `GET` | `/ticketType/` | Listar tipos base (General, VIP, etc.) |
+| `POST` | `/eventTicketType/` | Asignar tipos de tickets a un evento con precios y capacidades |
+
+### Compras y tickets (`/purchase`, `/ticket`)
+
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| `POST` | `/purchase/create` | Procesar la compra de tickets |
+| `GET` | `/ticket/my-tickets` | Listar tickets del usuario autenticado |
+
+### Dashboard (`/dashboard`)
+
+| Método | Ruta | Descripción |
+|--------|------|-------------|
+| `GET` | `/dashboard/` | Métricas generales (ventas, eventos populares, etc.) |
+
+---
+
+## Estructura del proyecto
+
+```
+EventsProject/
+├── docker-compose.yml
+├── package.json
+├── README.md
+├── backend/
+│   ├── index.js                  # Punto de entrada del servidor
+│   ├── database.js
+│   ├── constants/
+│   │   └── role.js
+│   ├── controllers/              # Lógica de cada ruta
+│   │   ├── authController.js
+│   │   ├── categoryController.js
+│   │   ├── dashboardController.js
+│   │   ├── eventController.js
+│   │   ├── eventTicketTypeController.js
+│   │   ├── purchaseController.js
+│   │   ├── ticketController.js
+│   │   ├── ticketTypeController.js
+│   │   └── userController.js
+│   ├── cron/
+│   │   └── eventCron.js          # Tareas programadas
+│   ├── database/
+│   │   ├── init.sql              # Creación de tablas
+│   │   └── seed.sql              # Datos iniciales
+│   ├── exceptions/
+│   │   └── errors.js
+│   ├── middlewares/
+│   │   └── authMiddleware.js     # Verificación JWT
+│   ├── models/                   # Acceso a datos (queries SQL)
+│   ├── routes/                   # Definición de endpoints
+│   ├── services/                 # Lógica de negocio
+│   └── utils/
+│       ├── bcrypt.js
+│       └── jwt.js
+└── frontend/
+    ├── index.html
+    ├── vite.config.js
+    └── src/
+        ├── App.jsx
+        ├── main.jsx
+        ├── components/           # Componentes reutilizables
+        │   ├── EventForm/
+        │   ├── FormField/
+        │   ├── Modal/
+        │   ├── Navbar/
+        │   └── Spinner/
+        ├── context/
+        │   └── AuthContext.jsx   # Estado global de autenticación
+        ├── pages/                # Vistas de la aplicación
+        │   ├── CategoriesPage/
+        │   ├── CheckoutPage/
+        │   ├── DetailPage/
+        │   ├── EventsPage/
+        │   ├── FavoritesPage/
+        │   ├── LoginPage/
+        │   ├── MyTicketsPage/
+        │   ├── ProfilePage/
+        │   ├── RegisterPage/
+        │   └── ReportPage/
+        ├── services/             # Llamadas a la API
+        │   ├── auth.service.js
+        │   ├── categories.service.js
+        │   ├── checkout.service.js
+        │   ├── events.service.js
+        │   ├── ticketTypes.service.js
+        │   ├── users.service.js
+        │   ├── config.js
+        │   └── index.js
+        └── styles/
+            └── global.css
 ```
 
 ---
 
-### Usuarios — `/users`
-
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| POST | `/users/create` | Crea un nuevo usuario |
-| GET | `/users/` | Lista todos los usuarios |
-| GET | `/users/:id` | Obtiene un usuario por ID |
-| PUT | `/users/update/:id` | Actualiza un usuario |
-
-**Body para crear usuario:**
-```json
-{
-  "name": "Juan Pérez",
-  "email": "juan@test.com",
-  "password": "123456",
-  "role": "Admin"
-}
-```
-> El rol siempre se asigna como `Member` al momento del registro, independientemente del valor enviado.
-
----
-
-### Eventos — `/event`
-
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| POST | `/event/create` | Crea un nuevo evento |
-| GET | `/event?page=1` | Lista eventos paginados (10 por página) |
-| GET | `/event/:id` | Obtiene un evento por ID |
-| PUT | `/event/update/:id` | Actualiza un evento |
-| PATCH | `/event/disable/:id` | Desactiva un evento (soft delete) |
-| PATCH | `/event/interested/:id` | Registra un clic de interés |
-| GET | `/event/getAllInterested` | Lista todas las interacciones |
-| POST | `/event/:id/favorite` | Marca un evento como favorito |
-| DELETE | `/event/:id/favorite` | Desmarca un evento como favorito |
-| GET | `/event/favorites/user/:userId` | Lista los favoritos de un usuario |
-| GET | `/event/favorites/report` | Reporte de favoritos por evento |
-
-**Body para favoritos:**
-```json
-{
-  "userId": 1
-}
-```
-
----
-
-### Categorías — `/category`
-
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| POST | `/category/create` | Crea una nueva categoría |
-| GET | `/category/` | Lista todas las categorías activas |
-| GET | `/category/:id` | Obtiene una categoría por ID |
-| PUT | `/category/update/:id` | Actualiza una categoría |
-| PATCH | `/category/disable/:id` | Desactiva una categoría (soft delete) |
-
----
-
-## Notas adicionales
+## Notas técnicas
 
 - Las contraseñas se almacenan hasheadas con **bcrypt**.
-- La paginación de eventos es fija en **10 registros por página**.
-- El soft delete en eventos y categorías usa el campo `status = false` en lugar de eliminar el registro.
-- Para reiniciar la base de datos desde cero:
-
-```bash
-docker compose down
-docker volume rm eventsproject_pgdata
-docker compose up -d
-```
+- La autenticación utiliza **JSON Web Tokens (JWT)**.
+- El modelo de datos usa *soft-deletes* (`status = false`) para evitar el borrado físico de registros.
