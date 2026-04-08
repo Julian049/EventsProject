@@ -1,4 +1,6 @@
-export const API_BASE = 'http://localhost:3250'
+const currentHost = window.location.hostname;
+
+export const API_BASE = `http://${currentHost}:3250`;
 
 export const getHeaders = () => {
     const token = localStorage.getItem('token')

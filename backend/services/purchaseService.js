@@ -72,7 +72,7 @@ exports.updatePurchase = async (id) => {
 };
 
 exports.getMyPurchases = (userId) => {
-    return PurchaseModel.getByUser(userId);
+    return PurchaseModel.getByUser(userId);s
 };
 
 exports.getMyPurchasesWithTickets = async (userId) => {
