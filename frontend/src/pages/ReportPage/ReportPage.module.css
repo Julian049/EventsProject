@@ -179,3 +179,117 @@
   background: #eff6ff;
   color: #1d4ed8;
 }
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.metricCard {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.5rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  border: 1.5px solid transparent;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  animation: fadeUp 0.4s ease both;
+}
+
+.metricCard:hover {
+  border-color: var(--border);
+  box-shadow: var(--shadow-lg);
+}
+
+.metricCardAccent {
+  background: var(--ink);
+  color: white;
+}
+
+.metricCardAccent .metricLabel { color: rgba(255,255,255,0.6); }
+.metricCardAccent .metricValue { color: white; }
+
+.metricIcon {
+  font-size: 1.5rem;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.metricValue {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--ink);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.metricLabel {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink-low);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.barSection {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.5rem 1.75rem;
+}
+
+.barSectionTitle {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.02em;
+}
+
+.barChart {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.barChartRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.barChartLabel {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-mid);
+  width: 70px;
+  flex-shrink: 0;
+}
+
+.barChartTrack {
+  flex: 1;
+  height: 10px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.barChartFill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.barChartValue {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ink);
+  min-width: 30px;
+  text-align: right;
+}
