@@ -57,3 +57,9 @@ export const getFavoritesReport = () =>
     fetch(`${API_BASE}/event/favorites/report`, {
         headers: getHeaders(),
     }).then(r => r.json())
+
+
+export const getDashboardMetrics = () =>
+    fetch(`${API_BASE}/dashboard/metrics`, {
+        headers: getHeaders(),
+    }).then(r => r.json())

@@ -1,86 +1,113 @@
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { getAllInterested, getFavoritesReport, getUsers } from '../../services'
-import Spinner from '../../components/Spinner/Spinner'
-import styles from './ReportPage.module.css'
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import {
+  getAllInterested,
+  getFavoritesReport,
+  getUsers,
+  getDashboardMetrics,
+} from "../../services";
+import Spinner from "../../components/Spinner/Spinner";
+import styles from "./ReportPage.module.css";
 
-const TOP = 10
+const TOP = 10;
 const TABS = [
-  { key: 'clicks',    label: '🖱 Clicks' },
-  { key: 'favorites', label: '⭐ Favoritos' },
-  { key: 'users',     label: '👥 Usuarios' },
-]
+  { key: "dashboard", label: "📊 Dashboard" },
+  { key: "clicks", label: "🖱 Clicks" },
+  { key: "favorites", label: "⭐ Favoritos" },
+  { key: "users", label: "👥 Usuarios" },
+];
 
 export default function ReportPage() {
-  const [activeTab, setActiveTab]         = useState('clicks')
-  const [clickRows, setClickRows]         = useState([])
-  const [favoriteRows, setFavoriteRows]   = useState([])
-  const [userRows, setUserRows]           = useState([])
-  const [loading, setLoading]             = useState(true)
-  const [showAllClicks, setShowAllClicks] = useState(false)
-  const [showAllFavs, setShowAllFavs]     = useState(false)
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const [clickRows, setClickRows] = useState([]);
+  const [favoriteRows, setFavoriteRows] = useState([]);
+  const [userRows, setUserRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showAllClicks, setShowAllClicks] = useState(false);
+  const [showAllFavs, setShowAllFavs] = useState(false);
+  const [metrics, setMetrics] = useState(null);
 
   useEffect(() => {
     async function load() {
       try {
-        const [interests, favorites, users] = await Promise.all([
+        const [interests, favorites, users, metricsData] = await Promise.all([
           getAllInterested(),
           getFavoritesReport(),
           getUsers(),
-        ])
+          getDashboardMetrics(),
+        ]);
+
+        setMetrics(metricsData);
 
         // Clicks
-        const countMap = {}
-        interests.forEach(i => {
-          if (i.type === 'click') {
-            countMap[i.event_id] = (countMap[i.event_id] || 0) + 1
+        const countMap = {};
+        interests.forEach((i) => {
+          if (i.type === "click") {
+            countMap[i.event_id] = (countMap[i.event_id] || 0) + 1;
           }
-        })
+        });
         setClickRows(
           favorites
-            .map(ev => ({ ...ev, count: countMap[ev.id] || 0 }))
-            .sort((a, b) => b.count - a.count)
-        )
+            .map((ev) => ({ ...ev, count: countMap[ev.id] || 0 }))
+            .sort((a, b) => b.count - a.count),
+        );
 
         // Favoritos
-        setFavoriteRows(favorites.map(ev => ({ ...ev, count: Number(ev.total_favorites) })))
+        setFavoriteRows(
+          favorites.map((ev) => ({ ...ev, count: Number(ev.total_favorites) })),
+        );
 
         // Usuarios
-        setUserRows(users)
-
+        setUserRows(users);
       } catch {
-        setClickRows([])
-        setFavoriteRows([])
-        setUserRows([])
+        setClickRows([]);
+        setFavoriteRows([]);
+        setUserRows([]);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
-    load()
-  }, [])
+    load();
+  }, []);
 
-  const maxClicks    = clickRows.length    > 0 ? Math.max(...clickRows.map(r => r.count), 1)    : 1
-  const maxFavorites = favoriteRows.length > 0 ? Math.max(...favoriteRows.map(r => r.count), 1) : 1
+  const maxClicks =
+    clickRows.length > 0 ? Math.max(...clickRows.map((r) => r.count), 1) : 1;
+  const maxFavorites =
+    favoriteRows.length > 0
+      ? Math.max(...favoriteRows.map((r) => r.count), 1)
+      : 1;
 
   const RankingTable = ({ rows, maxCount, showAll, onToggle }) => {
-    const visible = showAll ? rows : rows.slice(0, TOP)
+    const visible = showAll ? rows : rows.slice(0, TOP);
     return (
       <>
         <div className={styles.tableWrap}>
           <table className={styles.table}>
             <thead>
-              <tr><th>#</th><th>Evento</th><th>Total</th></tr>
+              <tr>
+                <th>#</th>
+                <th>Evento</th>
+                <th>Total</th>
+              </tr>
             </thead>
             <tbody>
               {visible.map((row, i) => (
-                <tr key={row.id} className={styles.row} style={{ animationDelay: `${i * 0.04}s` }}>
+                <tr
+                  key={row.id}
+                  className={styles.row}
+                  style={{ animationDelay: `${i * 0.04}s` }}
+                >
                   <td className={styles.rank}>#{i + 1}</td>
-                  <td className={styles.name}><Link to={`/event/${row.id}`}>{row.name}</Link></td>
+                  <td className={styles.name}>
+                    <Link to={`/event/${row.id}`}>{row.name}</Link>
+                  </td>
                   <td className={styles.barCell}>
                     <div className={styles.barWrap}>
                       <div
                         className={styles.bar}
-                        style={{ width: `${Math.max((row.count / maxCount) * 100, row.count > 0 ? 4 : 0)}%` }}
+                        style={{
+                          width: `${Math.max((row.count / maxCount) * 100, row.count > 0 ? 4 : 0)}%`,
+                        }}
                       />
                       <span className={styles.count}>{row.count}</span>
                     </div>
@@ -92,27 +119,44 @@ export default function ReportPage() {
         </div>
         {rows.length > TOP && (
           <button className={styles.btnToggle} onClick={onToggle}>
-            {showAll ? `▲ Mostrar solo Top ${TOP}` : `▼ Ver todos (${rows.length})`}
+            {showAll
+              ? `▲ Mostrar solo Top ${TOP}`
+              : `▼ Ver todos (${rows.length})`}
           </button>
         )}
       </>
-    )
-  }
+    );
+  };
 
   const UsersTable = () => (
     <div className={styles.tableWrap}>
       <table className={styles.table}>
         <thead>
-          <tr><th>#</th><th>Nombre</th><th>Correo</th><th>Rol</th></tr>
+          <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Rol</th>
+          </tr>
         </thead>
         <tbody>
           {userRows.map((user, i) => (
-            <tr key={user.id} className={styles.row} style={{ animationDelay: `${i * 0.04}s` }}>
+            <tr
+              key={user.id}
+              className={styles.row}
+              style={{ animationDelay: `${i * 0.04}s` }}
+            >
               <td className={styles.rank}>#{user.id}</td>
               <td className={styles.name}>{user.name}</td>
               <td className={styles.name}>{user.email}</td>
               <td>
-                <span className={user.role === 'Admin' ? styles.badgeAdmin : styles.badgeMember}>
+                <span
+                  className={
+                    user.role === "Admin"
+                      ? styles.badgeAdmin
+                      : styles.badgeMember
+                  }
+                >
                   {user.role}
                 </span>
               </td>
@@ -121,16 +165,16 @@ export default function ReportPage() {
         </tbody>
       </table>
     </div>
-  )
+  );
 
   return (
     <div className={styles.page}>
       {/* Tabs */}
       <div className={styles.tabs}>
-        {TABS.map(tab => (
+        {TABS.map((tab) => (
           <button
             key={tab.key}
-            className={`${styles.tab} ${activeTab === tab.key ? styles.tabActive : ''}`}
+            className={`${styles.tab} ${activeTab === tab.key ? styles.tabActive : ""}`}
             onClick={() => setActiveTab(tab.key)}
           >
             {tab.label}
@@ -138,42 +182,166 @@ export default function ReportPage() {
         ))}
       </div>
 
-      {loading ? <Spinner /> : (
+      {loading ? (
+        <Spinner />
+      ) : (
         <>
-          {activeTab === 'clicks' && (
+          {activeTab === "dashboard" && metrics && (
+            <>
+              <h1 className={styles.heading}>Dashboard</h1>
+              <p className={styles.sub}>Resumen general de la plataforma</p>
+              <div className={styles.metricsGrid}>
+                <div className={styles.metricCard}>
+                  <span className={styles.metricIcon}>👥</span>
+                  <span className={styles.metricValue}>
+                    {Number(metrics.totalUsers).toLocaleString("es-CO")}
+                  </span>
+                  <span className={styles.metricLabel}>
+                    Usuarios registrados
+                  </span>
+                </div>
+                <div className={styles.metricCard}>
+                  <span className={styles.metricIcon}>📅</span>
+                  <span className={styles.metricValue}>
+                    {Number(metrics.totalEvents).toLocaleString("es-CO")}
+                  </span>
+                  <span className={styles.metricLabel}>
+                    Eventos en plataforma
+                  </span>
+                </div>
+                <div className={styles.metricCard}>
+                  <span className={styles.metricIcon}>🎟</span>
+                  <span className={styles.metricValue}>
+                    {Number(metrics.totalTickets).toLocaleString("es-CO")}
+                  </span>
+                  <span className={styles.metricLabel}>Boletas emitidas</span>
+                </div>
+                <div className={styles.metricCard}>
+                  <span className={styles.metricIcon}>🛒</span>
+                  <span className={styles.metricValue}>
+                    {Number(metrics.totalPurchases).toLocaleString("es-CO")}
+                  </span>
+                  <span className={styles.metricLabel}>Compras realizadas</span>
+                </div>
+                <div
+                  className={`${styles.metricCard} ${styles.metricCardAccent}`}
+                >
+                  <span className={styles.metricIcon}>💰</span>
+                  <span className={styles.metricValue}>
+                    $
+                    {Number(metrics.totalRevenue).toLocaleString("es-CO", {
+                      minimumFractionDigits: 0,
+                    })}
+                  </span>
+                  <span className={styles.metricLabel}>Ingresos totales</span>
+                </div>
+              </div>
+
+              <div className={styles.barSection}>
+                <h2 className={styles.barSectionTitle}>
+                  Proporción de actividad
+                </h2>
+                <div className={styles.barChart}>
+                  {[
+                    {
+                      label: "Usuarios",
+                      value: Number(metrics.totalUsers),
+                      color: "#6366f1",
+                    },
+                    {
+                      label: "Compras",
+                      value: Number(metrics.totalPurchases),
+                      color: "#f97316",
+                    },
+                    {
+                      label: "Boletas",
+                      value: Number(metrics.totalTickets),
+                      color: "#22c55e",
+                    },
+                  ].map((item) => {
+                    const max = Math.max(
+                      Number(metrics.totalUsers),
+                      Number(metrics.totalPurchases),
+                      Number(metrics.totalTickets),
+                      1,
+                    );
+                    return (
+                      <div key={item.label} className={styles.barChartRow}>
+                        <span className={styles.barChartLabel}>
+                          {item.label}
+                        </span>
+                        <div className={styles.barChartTrack}>
+                          <div
+                            className={styles.barChartFill}
+                            style={{
+                              width: `${(item.value / max) * 100}%`,
+                              background: item.color,
+                            }}
+                          />
+                        </div>
+                        <span className={styles.barChartValue}>
+                          {item.value}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </>
+          )}
+          {activeTab === "clicks" && (
             <>
               <h1 className={styles.heading}>Reporte de Clicks</h1>
-              <p className={styles.sub}>Eventos ordenados por cantidad de clicks recibidos</p>
-              {clickRows.length === 0
-                ? <p className={styles.empty}>No hay datos para mostrar.</p>
-                : <RankingTable rows={clickRows} maxCount={maxClicks} showAll={showAllClicks} onToggle={() => setShowAllClicks(v => !v)} />
-              }
+              <p className={styles.sub}>
+                Eventos ordenados por cantidad de clicks recibidos
+              </p>
+              {clickRows.length === 0 ? (
+                <p className={styles.empty}>No hay datos para mostrar.</p>
+              ) : (
+                <RankingTable
+                  rows={clickRows}
+                  maxCount={maxClicks}
+                  showAll={showAllClicks}
+                  onToggle={() => setShowAllClicks((v) => !v)}
+                />
+              )}
             </>
           )}
 
-          {activeTab === 'favorites' && (
+          {activeTab === "favorites" && (
             <>
               <h1 className={styles.heading}>Reporte de Favoritos</h1>
-              <p className={styles.sub}>Eventos ordenados por cantidad de "Me interesa"</p>
-              {favoriteRows.length === 0
-                ? <p className={styles.empty}>No hay datos para mostrar.</p>
-                : <RankingTable rows={favoriteRows} maxCount={maxFavorites} showAll={showAllFavs} onToggle={() => setShowAllFavs(v => !v)} />
-              }
+              <p className={styles.sub}>
+                Eventos ordenados por cantidad de "Me interesa"
+              </p>
+              {favoriteRows.length === 0 ? (
+                <p className={styles.empty}>No hay datos para mostrar.</p>
+              ) : (
+                <RankingTable
+                  rows={favoriteRows}
+                  maxCount={maxFavorites}
+                  showAll={showAllFavs}
+                  onToggle={() => setShowAllFavs((v) => !v)}
+                />
+              )}
             </>
           )}
 
-          {activeTab === 'users' && (
+          {activeTab === "users" && (
             <>
               <h1 className={styles.heading}>Reporte de Usuarios</h1>
-              <p className={styles.sub}>{userRows.length} usuarios registrados en el sistema</p>
-              {userRows.length === 0
-                ? <p className={styles.empty}>No hay usuarios para mostrar.</p>
-                : <UsersTable />
-              }
+              <p className={styles.sub}>
+                {userRows.length} usuarios registrados en el sistema
+              </p>
+              {userRows.length === 0 ? (
+                <p className={styles.empty}>No hay usuarios para mostrar.</p>
+              ) : (
+                <UsersTable />
+              )}
             </>
           )}
         </>
       )}
     </div>
-  )
+  );
 }
