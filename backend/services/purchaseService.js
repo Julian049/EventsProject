@@ -8,10 +8,10 @@ const EventTicketTypeModel = require('../models/eventTicketTypeModel');
 const EventTicketTypeService = require('../services/eventTicketTypeService');
 const Role = require('../constants/role');
 const QRCode = require('qrcode');
-const { v4: uuidv4 } = require('uuid');
+const {v4: uuidv4} = require('uuid');
+const {tx} = require("../database");
 
-exports.createPurchase = async ({ userId, eventId, ticketTypeId, quantity }) => {
-    let tickets = [];
+exports.createPurchase = async ({userId, eventId, ticketTypeId, quantity}) => {
 
     const event = await EventModel.getById(eventId);
     const user = await UserModel.getById(userId);
@@ -23,7 +23,7 @@ exports.createPurchase = async ({ userId, eventId, ticketTypeId, quantity }) => 
     const actualQuantity = parseInt(eventTicketType.availableQuantity);
     const price = parseFloat(eventTicketType.price);
 
-    
+
     if (event.status !== 'Active')
         throw new Error('Evento no activo');
 
@@ -33,30 +33,30 @@ exports.createPurchase = async ({ userId, eventId, ticketTypeId, quantity }) => 
     if (quantity > actualQuantity)
         throw new Error('No hay suficientes tickets disponibles');
 
-    const newPurchase = new Purchase({
-        userId,
-        eventTicketTypeId: eventTicketType.id,
-        quantity,
-        totalAmount: quantity * price,
+    const tickets = await tx(async (t) => {
+
+        const newPurchase = new Purchase({
+            userId,
+            eventTicketTypeId: eventTicketType.id,
+            quantity,
+            totalAmount: quantity * price,
+        });
+
+        const purchaseCreated = await PurchaseModel.create(newPurchase, t);
+
+
+        await EventTicketTypeService.updateAvailableQuantity(eventId, ticketTypeId, quantity, t);
+
+        const ticketPromises = [];
+        for (let i = 0; i < quantity; i++) {
+            const ticketCode = uuidv4();
+            const qrCode = await QRCode.toDataURL(ticketCode);
+            ticketPromises.push(
+                TicketModel.create({purchaseId: purchaseCreated.id, qrCode}, t)
+            );
+        }
+        return Promise.all(ticketPromises);
     });
-
-    const purchaseCreated = await PurchaseModel.create(newPurchase);
-
-   
-    await EventTicketTypeService.updateAvailableQuantity(eventId, ticketTypeId, quantity);
-
-    for (let i = 0; i < quantity; i++) {
-        const ticketCode = uuidv4();
-        const qrCode = await QRCode.toDataURL(ticketCode);
-
-        const ticket = {
-            purchaseId: purchaseCreated.id,
-            qrCode
-        };
-
-        const ticketPurchased = await TicketService.createTicket(ticket);
-        tickets.push(ticketPurchased);
-    }
 
     return tickets;
 };
