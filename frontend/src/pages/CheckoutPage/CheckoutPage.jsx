@@ -28,10 +28,9 @@ export default function CheckoutPage() {
     const [purchasing, setPurchasing] = useState(false)
     const [error, setError] = useState(null)
 
-    const [selectedType, setSelectedType] = useState(null)
-    const [quantity, setQuantity] = useState(1)
+    // { [ticketTypeId]: quantity }
+    const [quantities, setQuantities] = useState({})
 
-    const [purchase, setPurchase] = useState(null)
     const [tickets, setTickets] = useState([])
 
     useEffect(() => {
@@ -40,9 +39,7 @@ export default function CheckoutPage() {
             try {
                 const [ev, types] = await Promise.all([
                     getEvent(id),
-                    getEventTicketTypes(id).catch((err) => {
-                        return [];
-                    }),
+                    getEventTicketTypes(id).catch(() => []),
                 ])
                 setEvent(ev)
                 setTicketTypes(Array.isArray(types) ? types : [])
@@ -52,26 +49,46 @@ export default function CheckoutPage() {
                 setLoading(false)
             }
         }
-
         load()
     }, [id])
+
+    function setQty(ttId, delta, max) {
+        setQuantities(prev => {
+            const current = prev[ttId] ?? 0
+            const next = Math.min(max, Math.max(0, current + delta))
+            return {...prev, [ttId]: next}
+        })
+    }
+
+    // Tipos que el usuario seleccionó (quantity > 0)
+    const selectedItems = ticketTypes.filter(tt => (quantities[tt.id] ?? 0) > 0)
+    const hasSelection  = selectedItems.length > 0
+
+    const total = selectedItems
+        .reduce((sum, tt) => sum + parseFloat(tt.price) * quantities[tt.id], 0)
+        .toFixed(2)
 
     async function handleConfirmPurchase() {
         setPurchasing(true)
         setError(null)
         try {
-            const response = await createPurchase(id, {
-                ticketTypeId: selectedType.ticketTypeId ?? selectedType.ticket_type_id ?? selectedType.id,
-                quantity,
-            })
-            setPurchase(response)
+            const items = selectedItems.map(tt => ({
+                ticketTypeId: tt.ticketTypeId ?? tt.ticket_type_id ?? tt.id,
+                quantity: quantities[tt.id],
+            }))
+
+            const response = await createPurchase(id, {items})
 
             setStep('processing')
+            await new Promise(resolve => setTimeout(resolve, 3000))
 
-            await new Promise(resolve => setTimeout(resolve, 3000));
-            await updateStatus(response[0].purchase_id);
+            // Actualizar estado de todas las compras generadas
+            const purchaseIds = [...new Set(
+                (Array.isArray(response) ? response : []).map(t => t.purchase_id).filter(Boolean)
+            )]
+            await Promise.all(purchaseIds.map(pid => updateStatus(pid)))
 
-            const generatedTickets = response.tickets || (Array.isArray(response) ? response : [])
+            const generatedTickets = Array.isArray(response) ? response : []
             setTickets(generatedTickets)
             setStep(2)
         } catch (err) {
@@ -84,14 +101,13 @@ export default function CheckoutPage() {
 
     if (loading) return <Spinner/>
 
-    const total = selectedType ? (parseFloat(selectedType.price) * quantity).toFixed(2) : '0.00'
-
     return (
         <div className={styles.page}>
 
             {/* Header */}
             <div className={styles.header}>
-                <button className={styles.backBtn} onClick={() => step === 0 ? navigate(-1) : setStep(s => s - 1)}>
+                <button className={styles.backBtn}
+                        onClick={() => step === 0 ? navigate(-1) : setStep(s => s - 1)}>
                     ← {step === 0 ? 'Volver al evento' : 'Atrás'}
                 </button>
                 <h1 className={styles.eventName}>{event?.name}</h1>
@@ -112,27 +128,22 @@ export default function CheckoutPage() {
             {/* Content */}
             <div className={styles.content}>
 
-                {/* STEP 0 — Select ticket type */}
+                {/* STEP 0 — Seleccionar */}
                 {step === 0 && (
                     <div className={styles.section}>
-                        <h2 className={styles.sectionTitle}>Elige tu tipo de entrada</h2>
+                        <h2 className={styles.sectionTitle}>Elige tus entradas</h2>
                         {ticketTypes.length === 0 && (
                             <p className={styles.empty}>No hay tipos de ticket disponibles para este evento.</p>
                         )}
                         <div className={styles.ticketGrid}>
                             {ticketTypes.map(tt => {
                                 const available = parseInt(tt.available_quantity ?? 0)
-                                const isSelected = selectedType?.id === tt.id
+                                const qty = quantities[tt.id] ?? 0
                                 const isSoldOut = available === 0
                                 return (
-                                    <button
+                                    <div
                                         key={tt.id}
-                                        disabled={isSoldOut}
-                                        onClick={() => {
-                                            setSelectedType(tt);
-                                            setQuantity(1)
-                                        }}
-                                        className={`${styles.ticketCard} ${isSelected ? styles.ticketCardSelected : ''} ${isSoldOut ? styles.ticketCardSoldOut : ''}`}
+                                        className={`${styles.ticketCard} ${qty > 0 ? styles.ticketCardSelected : ''} ${isSoldOut ? styles.ticketCardSoldOut : ''}`}
                                     >
                                         <div className={styles.ticketCardTop}>
                                             <span className={styles.ticketName}>{tt.name}</span>
@@ -144,35 +155,27 @@ export default function CheckoutPage() {
                                         <div className={styles.ticketPrice}>
                                             ${parseFloat(tt.price).toFixed(2)}
                                         </div>
-                                    </button>
+                                        {!isSoldOut && (
+                                            <div className={styles.quantityControl}>
+                                                <button onClick={() => setQty(tt.id, -1, available)}>−</button>
+                                                <span>{qty}</span>
+                                                <button onClick={() => setQty(tt.id, +1, available)}>+</button>
+                                            </div>
+                                        )}
+                                    </div>
                                 )
                             })}
                         </div>
 
-                        {selectedType && (
-                            <div className={styles.quantityRow}>
-                                <span className={styles.quantityLabel}>Cantidad</span>
-                                <div className={styles.quantityControl}>
-                                    <button onClick={() => setQuantity(q => Math.max(1, q - 1))}>−</button>
-                                    <span>{quantity}</span>
-                                    <button onClick={() => {
-                                        const max = parseInt(selectedType.availableQuantity ?? selectedType.available_quantity ?? 1)
-                                        setQuantity(q => Math.min(max, q + 1))
-                                    }}>+
-                                    </button>
-                                </div>
-                            </div>
-                        )}
-
                         {error && <p className={styles.error}>{error}</p>}
 
                         <div className={styles.footerRow}>
-                            {selectedType && (
+                            {hasSelection && (
                                 <span className={styles.totalPreview}>Total: <strong>${total}</strong></span>
                             )}
                             <button
                                 className={styles.btnPrimary}
-                                disabled={!selectedType}
+                                disabled={!hasSelection}
                                 onClick={() => setStep(1)}
                             >
                                 Continuar →
@@ -181,8 +184,8 @@ export default function CheckoutPage() {
                     </div>
                 )}
 
-                {/* STEP 1 — Confirm */}
-                {step === 1 && selectedType && (
+                {/* STEP 1 — Confirmar */}
+                {step === 1 && (
                     <div className={styles.section}>
                         <h2 className={styles.sectionTitle}>Confirma tu compra</h2>
 
@@ -191,18 +194,12 @@ export default function CheckoutPage() {
                                 <span>Evento</span>
                                 <strong>{event?.name}</strong>
                             </div>
-                            <div className={styles.confirmRow}>
-                                <span>Tipo de entrada</span>
-                                <strong>{selectedType.ticketTypeName ?? selectedType.name ?? `Tipo ${selectedType.id}`}</strong>
-                            </div>
-                            <div className={styles.confirmRow}>
-                                <span>Precio unitario</span>
-                                <strong>${parseFloat(selectedType.price).toFixed(2)}</strong>
-                            </div>
-                            <div className={styles.confirmRow}>
-                                <span>Cantidad</span>
-                                <strong>{quantity}</strong>
-                            </div>
+                            {selectedItems.map(tt => (
+                                <div key={tt.id} className={styles.confirmRow}>
+                                    <span>{tt.name} × {quantities[tt.id]}</span>
+                                    <strong>${(parseFloat(tt.price) * quantities[tt.id]).toFixed(2)}</strong>
+                                </div>
+                            ))}
                             <div className={`${styles.confirmRow} ${styles.confirmTotal}`}>
                                 <span>Total</span>
                                 <strong>${total}</strong>
@@ -226,17 +223,13 @@ export default function CheckoutPage() {
                     </div>
                 )}
 
-                {/* STEP processing — Pantalla de espera */}
+                {/* STEP processing */}
                 {step === 'processing' && (
                     <div className={styles.section} style={{textAlign: 'center', padding: '3rem 1rem'}}>
                         <div className={styles.processingIcon}>⏳</div>
                         <h2 className={styles.sectionTitle}>Procesando tu compra…</h2>
                         <p className={styles.successSub}>Estamos confirmando tu pago, no cierres esta ventana.</p>
-
-                        <div className={styles.statusBadge}>
-                            🟡 Compra pendiente
-                        </div>
-
+                        <div className={styles.statusBadge}>🟡 Compra pendiente</div>
                         <Spinner/>
                     </div>
                 )}
@@ -262,17 +255,9 @@ export default function CheckoutPage() {
                                             {t.status || 'Active'}
                                         </span>
                                     </div>
-
-                                    <div style={{
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center'
-                                    }} className={styles.qrContainer}>
-                                        <img
-                                            src={t.qr_code}
-                                            alt={`QR Ticket ${i + 1}`}
-                                            className={styles.qrImage}
-                                        />
+                                    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}
+                                         className={styles.qrContainer}>
+                                        <img src={t.qr_code} alt={`QR Ticket ${i + 1}`} className={styles.qrImage}/>
                                     </div>
                                 </div>
                             ))}
@@ -288,7 +273,6 @@ export default function CheckoutPage() {
                         </div>
                     </div>
                 )}
-
             </div>
         </div>
     )

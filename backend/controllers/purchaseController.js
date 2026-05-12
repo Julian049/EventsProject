@@ -3,9 +3,13 @@ const purchaseService = require('../services/purchaseService');
 exports.createPurchase = async (req, res) => {
     try {
         const eventId = parseInt(req.params.id);
-        const {ticketTypeId, quantity} = req.body;
+        const { items } = req.body;  
         const userId = req.user?.id;
-        const newPurchase = await purchaseService.createPurchase({userId, eventId, ticketTypeId, quantity});
+
+        if (!Array.isArray(items) || items.length === 0)
+            return res.status(400).json({ error: 'Debes enviar al menos un tipo de boleta' });
+
+        const newPurchase = await purchaseService.createPurchase({ userId, eventId, items });
         res.status(201).json(newPurchase);
 
     } catch (err) {

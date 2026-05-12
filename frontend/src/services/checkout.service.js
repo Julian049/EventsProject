@@ -3,7 +3,6 @@ import {API_BASE, getHeaders} from './config'
 export const getEventTicketTypes = (eventId) =>
     fetch(`${API_BASE}/eventTicketType/all/${eventId}`).then(r => r.json())
 
-
 export const createPurchase = (eventId, body) =>
     fetch(`${API_BASE}/purchase/create/${eventId}`, {
         method: 'POST',
@@ -25,7 +24,6 @@ export const getMyPurchases = () =>
     fetch(`${API_BASE}/purchase/my-purchases`, {
         headers: getHeaders(),
     }).then(r => r.json())
-
 
 export const createEventTicketType = (body) =>
     fetch(`${API_BASE}/eventTicketType/create`, {
