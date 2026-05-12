@@ -11,54 +11,65 @@ const QRCode = require('qrcode');
 const {v4: uuidv4} = require('uuid');
 const {tx} = require("../database");
 
-exports.createPurchase = async ({userId, eventId, ticketTypeId, quantity}) => {
 
+exports.createPurchase = async ({ userId, eventId, items }) => {
     const event = await EventModel.getById(eventId);
-    const user = await UserModel.getById(userId);
+    const user  = await UserModel.getById(userId);
 
-    if (!event)
-        throw new Error('Evento no encontrado');
+    if (!event)                   throw new Error('Evento no encontrado');
+    if (event.status !== 'Active') throw new Error('Evento no activo');
+    if (user.role !== Role.user)   throw new Error('Rol de usuario no valido para comprar');
 
-    const eventTicketType = await EventTicketTypeModel.getByIds(eventId, ticketTypeId);
-    const actualQuantity = parseInt(eventTicketType.availableQuantity);
-    const price = parseFloat(eventTicketType.price);
+    
+    const eventTicketTypes = await Promise.all(
+        items.map(({ ticketTypeId }) =>
+            EventTicketTypeModel.getByIds(eventId, ticketTypeId)
+        )
+    );
 
+    for (let i = 0; i < items.length; i++) {
+        const ett = eventTicketTypes[i];
+        if (!ett) throw new Error(`Tipo de ticket no encontrado`);
+        if (items[i].quantity > parseInt(ett.availableQuantity))
+            throw new Error(`No hay suficientes tickets disponibles para ${ett.name ?? ticketTypeId}`);
+    }
 
-    if (event.status !== 'Active')
-        throw new Error('Evento no activo');
+    const allTickets = await tx(async (t) => {
+        const results = [];
 
-    if (user.role !== Role.user)
-        throw new Error('Rol de usuario no valido para comprar');
+        for (let i = 0; i < items.length; i++) {
+            const { ticketTypeId, quantity } = items[i];
+            const ett   = eventTicketTypes[i];
+            const price = parseFloat(ett.price);
 
-    if (quantity > actualQuantity)
-        throw new Error('No hay suficientes tickets disponibles');
+            const newPurchase = new Purchase({
+                userId,
+                eventTicketTypeId: ett.id,
+                quantity,
+                totalAmount: quantity * price,
+            });
 
-    const tickets = await tx(async (t) => {
+            const purchaseCreated = await PurchaseModel.create(newPurchase, t);
 
-        const newPurchase = new Purchase({
-            userId,
-            eventTicketTypeId: eventTicketType.id,
-            quantity,
-            totalAmount: quantity * price,
-        });
+            // Descontar stock
+            const newQty = parseInt(ett.availableQuantity) - quantity;
+            await EventTicketTypeModel.updateAvailableQuantity(eventId, ticketTypeId, newQty, t);
 
-        const purchaseCreated = await PurchaseModel.create(newPurchase, t);
-
-
-        await EventTicketTypeService.updateAvailableQuantity(eventId, ticketTypeId, quantity, t);
-
-        const ticketPromises = [];
-        for (let i = 0; i < quantity; i++) {
-            const ticketCode = uuidv4();
-            const qrCode = await QRCode.toDataURL(ticketCode);
-            ticketPromises.push(
-                TicketModel.create({purchaseId: purchaseCreated.id, qrCode}, t)
-            );
+            // Generar tickets con QR
+            const ticketPromises = [];
+            for (let j = 0; j < quantity; j++) {
+                const ticketCode = uuidv4();
+                const qrCode = await QRCode.toDataURL(ticketCode);
+                ticketPromises.push(TicketModel.create({ purchaseId: purchaseCreated.id, qrCode }, t));
+            }
+            const tickets = await Promise.all(ticketPromises);
+            results.push(...tickets);
         }
-        return Promise.all(ticketPromises);
+
+        return results;
     });
 
-    return tickets;
+    return allTickets;
 };
 
 
