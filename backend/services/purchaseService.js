@@ -1,11 +1,9 @@
 const Purchase = require('../models/purchase');
-const TicketService = require('../services/ticketService');
 const TicketModel = require('../models/ticketModel');
 const PurchaseModel = require('../models/purchaseModel');
 const UserModel = require('../models/userModel');
 const EventModel = require('../models/eventModel');
 const EventTicketTypeModel = require('../models/eventTicketTypeModel');
-const EventTicketTypeService = require('../services/eventTicketTypeService');
 const Role = require('../constants/role');
 const QRCode = require('qrcode');
 const {v4: uuidv4} = require('uuid');
@@ -31,7 +29,7 @@ exports.createPurchase = async ({ userId, eventId, items }) => {
         const ett = eventTicketTypes[i];
         if (!ett) throw new Error(`Tipo de ticket no encontrado`);
         if (items[i].quantity > parseInt(ett.availableQuantity))
-            throw new Error(`No hay suficientes tickets disponibles para ${ett.name ?? ticketTypeId}`);
+            throw new Error(`No hay suficientes tickets disponibles para ${ett.name ?? items[i].ticketTypeId}`);
     }
 
     const allTickets = await tx(async (t) => {
