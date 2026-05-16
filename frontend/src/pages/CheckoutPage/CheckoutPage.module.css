@@ -467,3 +467,45 @@
     .stepLabel { display: none; }
     .stepper { gap: 0; }
 }
+/* ── Payment Form ───────────────────────────────────── */
+.paymentForm {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.fieldGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.fieldLabel {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ink-mid);
+}
+
+.fieldInput {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: var(--font-mono, monospace);
+    background: var(--surface);
+    color: var(--ink);
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+    letter-spacing: 0.1em;
+}
+
+.fieldInput:focus {
+    outline: none;
+    border-color: var(--ink);
+}
+
+.fieldInputShort {
+    max-width: 140px;
+}

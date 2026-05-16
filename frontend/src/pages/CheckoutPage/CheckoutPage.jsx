@@ -15,7 +15,7 @@ function getUserIdFromToken() {
     }
 }
 
-const STEPS = ['Seleccionar', 'Confirmar', 'Tu ticket']
+const STEPS = ['Seleccionar', 'Confirmar', 'Pago', 'Tu ticket']
 
 export default function CheckoutPage() {
     const {id} = useParams()
@@ -27,11 +27,10 @@ export default function CheckoutPage() {
     const [loading, setLoading] = useState(true)
     const [purchasing, setPurchasing] = useState(false)
     const [error, setError] = useState(null)
-
-    // { [ticketTypeId]: quantity }
     const [quantities, setQuantities] = useState({})
-
     const [tickets, setTickets] = useState([])
+    const [cardNumber, setCardNumber] = useState('')
+    const [cvv, setCvv] = useState('')
 
     useEffect(() => {
         async function load() {
@@ -60,13 +59,19 @@ export default function CheckoutPage() {
         })
     }
 
-    // Tipos que el usuario seleccionó (quantity > 0)
     const selectedItems = ticketTypes.filter(tt => (quantities[tt.id] ?? 0) > 0)
-    const hasSelection  = selectedItems.length > 0
-
+    const hasSelection = selectedItems.length > 0
     const total = selectedItems
         .reduce((sum, tt) => sum + parseFloat(tt.price) * quantities[tt.id], 0)
         .toFixed(2)
+
+    const isCardValid = cardNumber.replace(/\s/g, '').length >= 16 && cvv.length >= 3
+
+    function handleCardNumberChange(e) {
+        const raw = e.target.value.replace(/\D/g, '').slice(0, 16)
+        const formatted = raw.match(/.{1,4}/g)?.join(' ') ?? raw
+        setCardNumber(formatted)
+    }
 
     async function handleConfirmPurchase() {
         setPurchasing(true)
@@ -77,12 +82,14 @@ export default function CheckoutPage() {
                 quantity: quantities[tt.id],
             }))
 
-            const response = await createPurchase(id, {items})
+            const response = await createPurchase(id, {
+                items,
+                cardNumber: cardNumber.replace(/\s/g, ''),
+                cvv,
+            })
 
             setStep('processing')
-            await new Promise(resolve => setTimeout(resolve, 3000))
 
-            // Actualizar estado de todas las compras generadas
             const purchaseIds = [...new Set(
                 (Array.isArray(response) ? response : []).map(t => t.purchase_id).filter(Boolean)
             )]
@@ -90,10 +97,10 @@ export default function CheckoutPage() {
 
             const generatedTickets = Array.isArray(response) ? response : []
             setTickets(generatedTickets)
-            setStep(2)
+            setStep(3)
         } catch (err) {
             setError(err.message || 'Error al procesar la compra.')
-            setStep(1)
+            setStep(2)
         } finally {
             setPurchasing(false)
         }
@@ -141,10 +148,8 @@ export default function CheckoutPage() {
                                 const qty = quantities[tt.id] ?? 0
                                 const isSoldOut = available === 0
                                 return (
-                                    <div
-                                        key={tt.id}
-                                        className={`${styles.ticketCard} ${qty > 0 ? styles.ticketCardSelected : ''} ${isSoldOut ? styles.ticketCardSoldOut : ''}`}
-                                    >
+                                    <div key={tt.id}
+                                         className={`${styles.ticketCard} ${qty > 0 ? styles.ticketCardSelected : ''} ${isSoldOut ? styles.ticketCardSoldOut : ''}`}>
                                         <div className={styles.ticketCardTop}>
                                             <span className={styles.ticketName}>{tt.name}</span>
                                             {isSoldOut
@@ -166,18 +171,12 @@ export default function CheckoutPage() {
                                 )
                             })}
                         </div>
-
                         {error && <p className={styles.error}>{error}</p>}
-
                         <div className={styles.footerRow}>
                             {hasSelection && (
                                 <span className={styles.totalPreview}>Total: <strong>${total}</strong></span>
                             )}
-                            <button
-                                className={styles.btnPrimary}
-                                disabled={!hasSelection}
-                                onClick={() => setStep(1)}
-                            >
+                            <button className={styles.btnPrimary} disabled={!hasSelection} onClick={() => setStep(1)}>
                                 Continuar →
                             </button>
                         </div>
@@ -188,7 +187,6 @@ export default function CheckoutPage() {
                 {step === 1 && (
                     <div className={styles.section}>
                         <h2 className={styles.sectionTitle}>Confirma tu compra</h2>
-
                         <div className={styles.confirmCard}>
                             <div className={styles.confirmRow}>
                                 <span>Evento</span>
@@ -205,19 +203,54 @@ export default function CheckoutPage() {
                                 <strong>${total}</strong>
                             </div>
                         </div>
-
-                        {error && <p className={styles.error}>{error}</p>}
-
                         <div className={styles.footerRow}>
-                            <button className={styles.btnSecondary} onClick={() => setStep(0)}>
-                                ← Cambiar
+                            <button className={styles.btnSecondary} onClick={() => setStep(0)}>← Cambiar</button>
+                            <button className={styles.btnPrimary} onClick={() => setStep(2)}>
+                                Ir a pagar →
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {/* STEP 2 — Pago */}
+                {step === 2 && (
+                    <div className={styles.section}>
+                        <h2 className={styles.sectionTitle}>Datos de pago</h2>
+                        <div className={styles.paymentForm}>
+                            <div className={styles.fieldGroup}>
+                                <label className={styles.fieldLabel}>Número de tarjeta</label>
+                                <input
+                                    className={styles.fieldInput}
+                                    type="text"
+                                    placeholder="0000 0000 0000 0000"
+                                    value={cardNumber}
+                                    onChange={handleCardNumberChange}
+                                    maxLength={19}
+                                />
+                            </div>
+                            <div className={styles.fieldGroup}>
+                                <label className={styles.fieldLabel}>CVV</label>
+                                <input
+                                    className={`${styles.fieldInput} ${styles.fieldInputShort}`}
+                                    type="password"
+                                    placeholder="123"
+                                    value={cvv}
+                                    onChange={e => setCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                                    maxLength={4}
+                                />
+                            </div>
+                        </div>
+                        {error && <p className={styles.error}>{error}</p>}
+                        <div className={styles.footerRow}>
+                            <button className={styles.btnSecondary} onClick={() => { setError(null); setStep(1) }}>
+                                ← Atrás
                             </button>
                             <button
                                 className={styles.btnPrimary}
-                                disabled={purchasing}
+                                disabled={!isCardValid || purchasing}
                                 onClick={handleConfirmPurchase}
                             >
-                                {purchasing ? 'Procesando…' : 'Confirmar compra'}
+                                {purchasing ? 'Procesando…' : `Pagar $${total}`}
                             </button>
                         </div>
                     </div>
@@ -227,22 +260,21 @@ export default function CheckoutPage() {
                 {step === 'processing' && (
                     <div className={styles.section} style={{textAlign: 'center', padding: '3rem 1rem'}}>
                         <div className={styles.processingIcon}>⏳</div>
-                        <h2 className={styles.sectionTitle}>Procesando tu compra…</h2>
+                        <h2 className={styles.sectionTitle}>Procesando tu pago…</h2>
                         <p className={styles.successSub}>Estamos confirmando tu pago, no cierres esta ventana.</p>
                         <div className={styles.statusBadge}>🟡 Compra pendiente</div>
                         <Spinner/>
                     </div>
                 )}
 
-                {/* STEP 2 — Tickets / QR */}
-                {step === 2 && (
+                {/* STEP 3 — Tickets */}
+                {step === 3 && (
                     <div className={styles.section}>
                         <div className={styles.successHeader}>
                             <div className={styles.successIcon}>✓</div>
                             <h2 className={styles.sectionTitle}>¡Compra completada!</h2>
                             <p className={styles.successSub}>Guarda tus códigos QR, los necesitarás en la entrada.</p>
                         </div>
-
                         <div className={styles.ticketsIssued}>
                             {tickets.length === 0 && (
                                 <p className={styles.empty}>Tickets generados. Revisa tus compras para verlos.</p>
@@ -262,14 +294,9 @@ export default function CheckoutPage() {
                                 </div>
                             ))}
                         </div>
-
                         <div className={styles.footerRow} style={{justifyContent: 'center', gap: '1rem'}}>
-                            <button className={styles.btnSecondary} onClick={() => navigate('/')}>
-                                Ir al inicio
-                            </button>
-                            <button className={styles.btnPrimary} onClick={() => navigate(`/event/${id}`)}>
-                                Ver evento
-                            </button>
+                            <button className={styles.btnSecondary} onClick={() => navigate('/')}>Ir al inicio</button>
+                            <button className={styles.btnPrimary} onClick={() => navigate(`/event/${id}`)}>Ver evento</button>
                         </div>
                     </div>
                 )}
