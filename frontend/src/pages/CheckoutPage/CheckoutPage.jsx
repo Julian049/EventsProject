@@ -77,6 +77,12 @@ export default function CheckoutPage() {
         setPurchasing(true)
         setError(null)
         try {
+            const cleanCard = cardNumber.replace(/\s/g, '')
+
+            if (!cleanCard.startsWith('4') && !cleanCard.startsWith('5')) {
+                throw new Error('La tarjeta no pertenece a las franquicias aceptadas (Visa inicia con 4, Mastercard con 5).')
+            }
+
             const items = selectedItems.map(tt => ({
                 ticketTypeId: tt.ticketTypeId ?? tt.ticket_type_id ?? tt.id,
                 quantity: quantities[tt.id],
