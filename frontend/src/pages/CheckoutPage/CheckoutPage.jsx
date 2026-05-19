@@ -31,6 +31,7 @@ export default function CheckoutPage() {
     const [tickets, setTickets] = useState([])
     const [cardNumber, setCardNumber] = useState('')
     const [cvv, setCvv] = useState('')
+    const [franchiseId, setFranchiseId] = useState('1')
 
     useEffect(() => {
         async function load() {
@@ -48,6 +49,7 @@ export default function CheckoutPage() {
                 setLoading(false)
             }
         }
+
         load()
     }, [id])
 
@@ -79,10 +81,6 @@ export default function CheckoutPage() {
         try {
             const cleanCard = cardNumber.replace(/\s/g, '')
 
-            if (!cleanCard.startsWith('4') && !cleanCard.startsWith('5')) {
-                throw new Error('La tarjeta no pertenece a las franquicias aceptadas (Visa inicia con 4, Mastercard con 5).')
-            }
-
             const items = selectedItems.map(tt => ({
                 ticketTypeId: tt.ticketTypeId ?? tt.ticket_type_id ?? tt.id,
                 quantity: quantities[tt.id],
@@ -90,8 +88,9 @@ export default function CheckoutPage() {
 
             const response = await createPurchase(id, {
                 items,
-                cardNumber: cardNumber.replace(/\s/g, ''),
+                cardNumber: cleanCard,
                 cvv,
+                franchiseId: parseInt(franchiseId)
             })
 
             setStep('processing')
@@ -223,6 +222,58 @@ export default function CheckoutPage() {
                     <div className={styles.section}>
                         <h2 className={styles.sectionTitle}>Datos de pago</h2>
                         <div className={styles.paymentForm}>
+
+                            <div className={styles.fieldGroup}>
+                                <label className={styles.fieldLabel}>Franquicia de la tarjeta</label>
+                                <div style={{display: 'flex', gap: '1.5rem', marginTop: '0.5rem'}}>
+                                    <label style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.5rem',
+                                        cursor: 'pointer'
+                                    }}>
+                                        <input
+                                            type="radio"
+                                            name="franchise"
+                                            value="1"
+                                            checked={franchiseId === '1'}
+                                            onChange={(e) => setFranchiseId(e.target.value)}
+                                        />
+                                        Visa
+                                    </label>
+                                    <label style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.5rem',
+                                        cursor: 'pointer'
+                                    }}>
+                                        <input
+                                            type="radio"
+                                            name="franchise"
+                                            value="2"
+                                            checked={franchiseId === '2'}
+                                            onChange={(e) => setFranchiseId(e.target.value)}
+                                        />
+                                        Mastercard
+                                    </label>
+                                    <label style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.5rem',
+                                        cursor: 'pointer'
+                                    }}>
+                                        <input
+                                            type="radio"
+                                            name="franchise"
+                                            value="3"
+                                            checked={franchiseId === '3'}
+                                            onChange={(e) => setFranchiseId(e.target.value)}
+                                        />
+                                        Nu
+                                    </label>
+                                </div>
+                            </div>
+
                             <div className={styles.fieldGroup}>
                                 <label className={styles.fieldLabel}>Número de tarjeta</label>
                                 <input
@@ -248,7 +299,10 @@ export default function CheckoutPage() {
                         </div>
                         {error && <p className={styles.error}>{error}</p>}
                         <div className={styles.footerRow}>
-                            <button className={styles.btnSecondary} onClick={() => { setError(null); setStep(1) }}>
+                            <button className={styles.btnSecondary} onClick={() => {
+                                setError(null);
+                                setStep(1)
+                            }}>
                                 ← Atrás
                             </button>
                             <button
@@ -289,7 +343,8 @@ export default function CheckoutPage() {
                                 <div key={t.id ?? i} className={styles.ticketIssued}>
                                     <div className={styles.ticketIssuedHeader}>
                                         <span>Ticket #{i + 1}</span>
-                                        <span className={`${styles.ticketStatus} ${t.status === 'Active' ? styles.statusActive : ''}`}>
+                                        <span
+                                            className={`${styles.ticketStatus} ${t.status === 'Active' ? styles.statusActive : ''}`}>
                                             {t.status || 'Active'}
                                         </span>
                                     </div>
@@ -302,7 +357,8 @@ export default function CheckoutPage() {
                         </div>
                         <div className={styles.footerRow} style={{justifyContent: 'center', gap: '1rem'}}>
                             <button className={styles.btnSecondary} onClick={() => navigate('/')}>Ir al inicio</button>
-                            <button className={styles.btnPrimary} onClick={() => navigate(`/event/${id}`)}>Ver evento</button>
+                            <button className={styles.btnPrimary} onClick={() => navigate(`/event/${id}`)}>Ver evento
+                            </button>
                         </div>
                     </div>
                 )}
