@@ -8,7 +8,7 @@ exports.createPurchase = async (req, res) => {
     logger.info(`[Controller] [createPurchase] Iniciando proceso de compra para Usuario ID: ${userId} en Evento ID: ${eventId}`);
 
     try {
-        const { items, cardNumber, cvv } = req.body;
+        const { items, cardNumber, cvv, franchiseId } = req.body;
 
         if (!Array.isArray(items) || items.length === 0) {
             logger.warn(`[Controller] [createPurchase] Validación fallida: El usuario ${userId} envió una lista de ítems vacía o inválida`);
@@ -21,7 +21,7 @@ exports.createPurchase = async (req, res) => {
         }
 
         logger.info(`[Controller] [createPurchase] Enviando datos al servicio para procesar el pago y reserva (Tickets: ${items.length})`);
-        const newPurchase = await purchaseService.createPurchase({ userId, eventId, items, cardNumber, cvv });
+        const newPurchase = await purchaseService.createPurchase({ userId, eventId, items, cardNumber, cvv, franchiseId});
 
         logger.info(`[Controller] [createPurchase] Compra creada con éxito. ID de transacción/compra: ${newPurchase.id || 'Generada'}`);
         res.status(201).json(newPurchase);
