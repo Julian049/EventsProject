@@ -10,7 +10,7 @@ const {v4: uuidv4} = require('uuid');
 const {tx} = require("../database");
 const logger = require('../utils/logger');
 
-async function callPaymentGateway(cardNumber, cvv, totalAmount) {
+async function callPaymentGateway(cardNumber, cvv, totalAmount,franchiseId) {
     logger.info(`[Pasarela] Intentando cargo a tarjeta por un total de $${totalAmount}`);
 
     const response = await fetch(process.env.PASARELA_URL + '/payment-gateway', {
@@ -21,6 +21,7 @@ async function callPaymentGateway(cardNumber, cvv, totalAmount) {
             cardNumber,
             cvv,
             amount: totalAmount,
+            franchiseId: franchiseId,
         }),
     });
 
@@ -33,7 +34,7 @@ async function callPaymentGateway(cardNumber, cvv, totalAmount) {
     return data;
 }
 
-exports.createPurchase = async ({ userId, eventId, items, cardNumber, cvv }) => {
+exports.createPurchase = async ({ userId, eventId, items, cardNumber, cvv ,franchiseId}) => {
     logger.info(`[Service] Iniciando proceso de compra - Usuario: ${userId}, Evento: ${eventId}`);
 
     const event = await EventModel.getById(eventId);
@@ -60,7 +61,7 @@ exports.createPurchase = async ({ userId, eventId, items, cardNumber, cvv }) => 
         sum + parseFloat(ett.price) * items[i].quantity, 0
     );
 
-    await callPaymentGateway(cardNumber, cvv, totalAmount);
+    await callPaymentGateway(cardNumber, cvv, totalAmount, franchiseId);
 
     logger.info(`[Service] Pago confirmado. Ejecutando transacción en Base de Datos...`);
 
