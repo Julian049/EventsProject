@@ -10,7 +10,9 @@ export const createPurchase = (eventId, body) =>
         body: JSON.stringify(body),
     }).then(async r => {
         const data = await r.json()
-        if (!r.ok) throw new Error(data.message || 'Error al crear la compra')
+        if (!r.ok) {
+            throw new Error(data.error || 'Error al crear la compra')
+        }
         return data
     })
 
