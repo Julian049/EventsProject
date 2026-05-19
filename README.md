@@ -31,6 +31,8 @@ DB_PORT=5432
 DB_HOST=localhost
 JWT_SECRET=tu_secreto_para_tokens
 PORT=3250
+PASARELA_URL=http://localhost:8080
+EMPRESA_ID=a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
 ```
 
 ### Ejecutar el backend
