@@ -8,8 +8,11 @@ const Role = require('../constants/role');
 const QRCode = require('qrcode');
 const {v4: uuidv4} = require('uuid');
 const {tx} = require("../database");
+const logger = require('../utils/logger');
 
 async function callPaymentGateway(cardNumber, cvv, totalAmount) {
+    logger.info(`[Pasarela] Intentando cargo a tarjeta por un total de $${totalAmount}`);
+
     const response = await fetch(process.env.PASARELA_URL + '/payment-gateway', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -23,18 +26,16 @@ async function callPaymentGateway(cardNumber, cvv, totalAmount) {
 
     const data = await response.json();
 
-    if (!response.ok) {
-        throw new Error(data.message || 'Error al procesar el pago');
-    }
+    if (!response.ok)        throw new Error(data.message || 'Error al procesar el pago');
+    if (data.status !== 'APROBADO') throw new Error('Pago rechazado por la entidad bancaria');
 
-    if (data.status !== 'APROBADO') {
-        throw new Error('Pago rechazado por la entidad bancaria');
-    }
-
+    logger.info(`[Pasarela] Pago aprobado exitosamente`);
     return data;
 }
 
 exports.createPurchase = async ({ userId, eventId, items, cardNumber, cvv }) => {
+    logger.info(`[Service] Iniciando proceso de compra - Usuario: ${userId}, Evento: ${eventId}`);
+
     const event = await EventModel.getById(eventId);
     const user  = await UserModel.getById(userId);
 
@@ -60,6 +61,8 @@ exports.createPurchase = async ({ userId, eventId, items, cardNumber, cvv }) => 
     );
 
     await callPaymentGateway(cardNumber, cvv, totalAmount);
+
+    logger.info(`[Service] Pago confirmado. Ejecutando transacción en Base de Datos...`);
 
     const allTickets = await tx(async (t) => {
         const results = [];
@@ -94,10 +97,12 @@ exports.createPurchase = async ({ userId, eventId, items, cardNumber, cvv }) => 
         return results;
     });
 
+    logger.info(`[Service] Compra guardada. Se generaron ${allTickets.length} tickets con QR.`);
     return allTickets;
 };
 
 exports.updatePurchase = async (id) => {
+    logger.info(`[Service] Modificando estado de la compra ID: ${id}`);
     const purchase = await PurchaseModel.getById(id);
     if (!purchase) throw new Error('Compra no encontrada');
     return PurchaseModel.updateStatusToComplete(id);
