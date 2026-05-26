@@ -17,6 +17,30 @@ El proyecto está dividido en dos partes principales:
 
 ---
 
+## Worker
+
+### Variables de entorno
+
+Crea un archivo `.env` dentro de `worker/` con las siguientes variables:
+
+```env
+RABBITMQ_HOST=localhost
+RABBITMQ_PORT=5672
+RABBITMQ_USERNAME=admin
+RABBITMQ_PASSWORD=admin
+AZURE_OPENAI_KEY=secreto
+AZURE_OPENAI_ENDPOINT=url
+AZURE_OPENAI_DEPLOYMENT_NAME=o4-mini
+```
+
+### Ejecutar el worker
+
+```bash
+cd worker
+npm install
+node src/index.js
+```
+
 ## Backend
 
 ### Variables de entorno
@@ -33,6 +57,10 @@ JWT_SECRET=tu_secreto_para_tokens
 PORT=3250
 PASARELA_URL=http://localhost:8080
 EMPRESA_ID=a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11
+RABBITMQ_HOST=localhost
+RABBITMQ_PORT=5672
+RABBITMQ_USERNAME=admin
+RABBITMQ_PASSWORD=admin
 ```
 
 ### Ejecutar el backend
