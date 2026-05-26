@@ -10,6 +10,7 @@
   "author": "Julian Bocanegra, Diego Gil",
   "license": "ISC",
   "dependencies": {
+    "amqplib": "^2.0.1",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",

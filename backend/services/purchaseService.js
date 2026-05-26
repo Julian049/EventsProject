@@ -9,6 +9,8 @@ const QRCode = require('qrcode');
 const {v4: uuidv4} = require('uuid');
 const {tx} = require("../database");
 const logger = require('../utils/logger');
+const { getChannel, EXCHANGE, ROUTING_KEY } = require('../config/rabbitmq');
+const { createTransactionEventDTO } = require('../dtos/transactionEventDTO');
 
 async function callPaymentGateway(cardNumber, cvv, totalAmount,franchiseId) {
     logger.info(`[Pasarela] Intentando cargo a tarjeta por un total de $${totalAmount}`);
@@ -34,7 +36,7 @@ async function callPaymentGateway(cardNumber, cvv, totalAmount,franchiseId) {
     return data;
 }
 
-exports.createPurchase = async ({ userId, eventId, items, cardNumber, cvv ,franchiseId}) => {
+exports.createPurchase = async ({ userId, eventId, items, cardNumber, cvv, franchiseId }) => {
     logger.info(`[Service] Iniciando proceso de compra - Usuario: ${userId}, Evento: ${eventId}`);
 
     const event = await EventModel.getById(eventId);
@@ -61,9 +63,33 @@ exports.createPurchase = async ({ userId, eventId, items, cardNumber, cvv ,franc
         sum + parseFloat(ett.price) * items[i].quantity, 0
     );
 
-    await callPaymentGateway(cardNumber, cvv, totalAmount, franchiseId);
+    let gatewayResponse;
+    try {
+        gatewayResponse = await callPaymentGateway(cardNumber, cvv, totalAmount, franchiseId);
+    } catch (e) {
+        publishTransactionEvent(createTransactionEventDTO({
+            purchaseId: null,
+            eventName: event.name,
+            description: event.description,
+            error: true,
+            message: e.message,
+        }));
+        throw e;
+    }
 
-    logger.info(`[Service] Pago confirmado. Ejecutando transacción en Base de Datos...`);
+    if (gatewayResponse.status !== 'APROBADO') {
+        publishTransactionEvent(createTransactionEventDTO({
+            purchaseId: null,
+            eventName: event.name,
+            description: event.description,
+            error: true,
+            message: `Pago rechazado por la entidad bancaria. Transacción: ${gatewayResponse.transactionId}`,
+        }));
+        throw new Error('Pago rechazado por la entidad bancaria');
+    }
+
+    logger.info(`[Service] Pago aprobado. Transacción: ${gatewayResponse.transactionId} - Fecha: ${gatewayResponse.date}`);
+    logger.info(`[Service] Ejecutando transacción en Base de Datos...`);
 
     const allTickets = await tx(async (t) => {
         const results = [];
@@ -99,8 +125,27 @@ exports.createPurchase = async ({ userId, eventId, items, cardNumber, cvv ,franc
     });
 
     logger.info(`[Service] Compra guardada. Se generaron ${allTickets.length} tickets con QR.`);
+
+    publishTransactionEvent(createTransactionEventDTO({
+        purchaseId: allTickets[0]?.purchaseId,
+        eventName: event.name,
+        description: event.description,
+        error: false,
+        message: `Pago aprobado. Transacción: ${gatewayResponse.transactionId} - ${gatewayResponse.date}`,
+    }));
+
     return allTickets;
 };
+
+function publishTransactionEvent(dto) {
+    try {
+        const channel = getChannel();
+        channel.publish(EXCHANGE, ROUTING_KEY, Buffer.from(JSON.stringify(dto)), { persistent: true });
+        logger.info(`[RabbitMQ] Evento publicado - error: ${dto.error}`);
+    } catch (e) {
+        logger.error(`[RabbitMQ] Fallo al publicar evento: ${e.message}`);
+    }
+}
 
 exports.updatePurchase = async (id) => {
     logger.info(`[Service] Modificando estado de la compra ID: ${id}`);
