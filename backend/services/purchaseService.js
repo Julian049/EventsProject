@@ -29,8 +29,7 @@ async function callPaymentGateway(cardNumber, cvv, totalAmount,franchiseId) {
 
     const data = await response.json();
 
-    if (!response.ok)        throw new Error(data.message || 'Error al procesar el pago');
-    if (data.status !== 'APROBADO') throw new Error('Pago rechazado por la entidad bancaria');
+    if (!response.ok) throw new Error(data.description || data.message || 'Error al procesar el pago');
 
     logger.info(`[Pasarela] Pago aprobado exitosamente`);
     return data;
@@ -77,15 +76,15 @@ exports.createPurchase = async ({ userId, eventId, items, cardNumber, cvv, franc
         throw e;
     }
 
-    if (gatewayResponse.status !== 'APROBADO') {
+    if (gatewayResponse.status === 'RECHAZADO') {
         publishTransactionEvent(createTransactionEventDTO({
             purchaseId: null,
             eventName: event.name,
             description: event.description,
             error: true,
-            message: `Pago rechazado por la entidad bancaria. Transacción: ${gatewayResponse.transactionId}`,
+            message: gatewayResponse.message,
         }));
-        throw new Error('Pago rechazado por la entidad bancaria');
+        throw new Error(gatewayResponse.message);
     }
 
     logger.info(`[Service] Pago aprobado. Transacción: ${gatewayResponse.transactionId} - Fecha: ${gatewayResponse.date}`);
@@ -131,7 +130,7 @@ exports.createPurchase = async ({ userId, eventId, items, cardNumber, cvv, franc
         eventName: event.name,
         description: event.description,
         error: false,
-        message: `Pago aprobado. Transacción: ${gatewayResponse.transactionId} - ${gatewayResponse.date}`,
+        message: gatewayResponse.message,
     }));
 
     return allTickets;
