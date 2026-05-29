@@ -1,5 +1,6 @@
-function createTransactionEventDTO({ purchaseId, eventName, description, error, message }) {
+function createTransactionEventDTO({ userId,purchaseId, eventName, description, error, message }) {
     return {
+        userId,
         purchaseId,
         eventName,
         description,
