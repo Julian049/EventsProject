@@ -194,6 +194,8 @@ backend/.env
 .env.test.local
 .env.production.local
 .env.local
+worker/.env
+.env.development.local
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
