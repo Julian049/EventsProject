@@ -509,3 +509,134 @@
 .fieldInputShort {
     max-width: 140px;
 }
+/* ── Processing Steps ───────────────────────────────── */
+.processingSteps {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 1.5rem 0 0;
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.processingStep {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    opacity: 0.35;
+    transition: opacity 0.4s, background 0.4s;
+}
+
+.processingStep:last-child {
+    border-bottom: none;
+}
+
+.stepPhaseActive {
+    opacity: 1;
+    background: var(--card);
+}
+
+.stepPhaseDone {
+    opacity: 1;
+    background: #f0fdf4;
+}
+
+.phaseIcon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #dcfce7;
+    color: #166534;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.phaseDot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--ink);
+    animation: pulse 1s infinite;
+    display: block;
+}
+
+.phaseEmpty {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--border);
+    display: block;
+}
+
+.phaseText {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.phaseText strong {
+    font-size: 0.9rem;
+    color: var(--ink);
+    font-weight: 700;
+}
+
+.phaseText span {
+    font-size: 0.78rem;
+    color: var(--ink-low);
+}
+
+/* ── AI Message Card ────────────────────────────────── */
+.aiMessageCard {
+    margin-top: 1.5rem;
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    text-align: center;
+    animation: fadeUp 0.4s ease both;
+}
+
+.aiMessageSuccess {
+    background: #f0fdf4;
+    border: 1.5px solid #bbf7d0;
+}
+
+.aiMessageError {
+    background: #fff7ed;
+    border: 1.5px solid #fed7aa;
+}
+
+.aiIcon {
+    font-size: 1.75rem;
+}
+
+.aiText {
+    font-size: 0.95rem;
+    color: var(--ink);
+    line-height: 1.6;
+    margin: 0;
+    font-style: italic;
+}
+
+.aiLabel {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--ink-low);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.4; transform: scale(0.8); }
+}
