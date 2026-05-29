@@ -77,6 +77,13 @@ El servidor quedará disponible en `http://localhost:3250`.
 
 ## Frontend
 
+Crea un archivo `.env` dentro de `backend/` con las siguientes variables:
+
+```env
+VITE_WS_URL=ws://localhost:3250/ws
+```
+
+
 ### Ejecutar el frontend
 
 Abre una nueva terminal y desde la raíz del proyecto:
