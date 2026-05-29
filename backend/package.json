@@ -20,7 +20,8 @@
     "pg-promise": "^12.6.1",
     "qrcode": "^1.5.4",
     "uuid": "^13.0.0",
-    "winston": "^3.19.0"
+    "winston": "^3.19.0",
+    "ws": "^8.21.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

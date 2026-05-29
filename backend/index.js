@@ -1,10 +1,12 @@
 require('dotenv').config();
 const express = require("express");
+const http = require('http');
 const app = express();
 const port = 3250;
 const cors = require('cors');
 const { connectRabbitMQ, getChannel } = require('./config/rabbitmq');
 const { startPaymentOutputConsumer } = require('./consumer/paymentOutputConsumer');
+const { attachToServer } = require('./websocket/wsServer');
 
 const db = require('./database');
 db.one('SELECT $1 AS value', 123)
@@ -29,10 +31,15 @@ app.use('/dashboard', require('./routes/dashboardRoute'));
 
 require('./cron/eventCron');
 
+const server = http.createServer(app);
+attachToServer(server);
+
 connectRabbitMQ()
     .then(async () => {
         await startPaymentOutputConsumer(getChannel());
-        app.listen(port, '0.0.0.0', () => console.log("Server running on port " + port));
+        server.listen(port, '0.0.0.0', () =>
+            console.log(`Server running on port ${port}`)
+        );
     })
     .catch(error => {
         console.error('Error conectando RabbitMQ:', error);
