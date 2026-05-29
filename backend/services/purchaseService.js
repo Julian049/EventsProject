@@ -67,6 +67,7 @@ exports.createPurchase = async ({ userId, eventId, items, cardNumber, cvv, franc
         gatewayResponse = await callPaymentGateway(cardNumber, cvv, totalAmount, franchiseId);
     } catch (e) {
         publishTransactionEvent(createTransactionEventDTO({
+            userId,
             purchaseId: null,
             eventName: event.name,
             description: event.description,
@@ -78,6 +79,7 @@ exports.createPurchase = async ({ userId, eventId, items, cardNumber, cvv, franc
 
     if (gatewayResponse.status === 'RECHAZADO') {
         publishTransactionEvent(createTransactionEventDTO({
+            userId,
             purchaseId: null,
             eventName: event.name,
             description: event.description,
@@ -126,6 +128,7 @@ exports.createPurchase = async ({ userId, eventId, items, cardNumber, cvv, franc
     logger.info(`[Service] Compra guardada. Se generaron ${allTickets.length} tickets con QR.`);
 
     publishTransactionEvent(createTransactionEventDTO({
+        userId,
         purchaseId: allTickets[0]?.purchaseId,
         eventName: event.name,
         description: event.description,
